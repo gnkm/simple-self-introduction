@@ -21,7 +21,7 @@
       "dependencies": "F001",
       "behavior": ".github/workflows/ にワークフローがあり、pull_request と main への push で起動する。pnpm の lockfile を尊重して install し、pnpm check を実行する。Node バージョンは Vite が要求する範囲に固定する。",
       "verification": "ls .github/workflows/*.yml .github/workflows/*.yaml 2>/dev/null | head -1 が存在すること。ワークフロー YAML に pull_request と push、pnpm check、pnpm/action-setup または pnpm の明示利用、actions/setup-node が含まれること。package.json の packageManager または engines.node がワークフローの Node と矛盾しないこと。",
-      "passes": false
+      "passes": true
     },
     {
       "id": "F003",
