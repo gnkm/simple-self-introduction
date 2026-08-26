@@ -34,7 +34,8 @@
 - このセッション開始時も `main` が origin より 3 コミット遅れており、未 fetch だと完了済み F002 に再着手するところだった
 - `.cursor/sync-latest-main.sh` を追加し、`environment.json` の `start` から実行
 - `AGENTS.md` / implement-next-feature / `agent-loop.mdc` で、対象選定前の fetch を必須にした
-- feature ブランチや dirty な作業ツリーは checkout しない
+- feature ブランチ・dirty・分岐した local `main` は checkout しない。クリーンな ancestor だけ `git merge --ff-only`
+- 検証: 古い main（F002 false）→ origin/main（F002 true）、feature / dirty / diverged は維持、detached は FF、`pnpm check` exit 0。verifier 合格
 
 ### 2026-08-26（F002）
 

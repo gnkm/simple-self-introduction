@@ -60,21 +60,25 @@ if [ "$HEAD_SHA" = "$REMOTE_SHA" ]; then
   exit 0
 fi
 
-should_apply=0
-if [ "$BRANCH" = "$DEFAULT_BRANCH" ]; then
-  should_apply=1
-elif [ "$BRANCH" = "HEAD" ] && git merge-base --is-ancestor HEAD "$REMOTE_REF"; then
-  # デタッチ + 古い main 相当。Build の reuse checkout を想定する。
-  should_apply=1
-fi
-
-if [ "$should_apply" -ne 1 ]; then
+if [ "$BRANCH" != "$DEFAULT_BRANCH" ] && [ "$BRANCH" != "HEAD" ]; then
   log "skip checkout: ブランチ ${BRANCH} を維持。${REMOTE_REF}=${REMOTE_SHA}"
   exit 0
 fi
 
+if ! git merge-base --is-ancestor HEAD "$REMOTE_REF"; then
+  log "skip checkout: HEAD が ${REMOTE_REF} の祖先ではない。ブランチ ${BRANCH} を維持"
+  exit 0
+fi
+
 OLD_LOCK="$(git rev-parse HEAD:pnpm-lock.yaml 2>/dev/null || true)"
-git checkout -B "$DEFAULT_BRANCH" "$REMOTE_REF"
+
+if [ "$BRANCH" = "$DEFAULT_BRANCH" ]; then
+  git merge --ff-only "$REMOTE_REF"
+else
+  # デタッチ + 古い main 相当。Build の reuse checkout を想定する。
+  git checkout -B "$DEFAULT_BRANCH" "$REMOTE_REF"
+fi
+
 NEW_SHA="$(git rev-parse HEAD)"
 NEW_LOCK="$(git rev-parse HEAD:pnpm-lock.yaml 2>/dev/null || true)"
 log "fast-forward: ${HEAD_SHA} -> ${NEW_SHA} (${DEFAULT_BRANCH})"
