@@ -7,20 +7,110 @@
   "features": [
     {
       "id": "F001",
-      "name": "{{機能名}}",
-      "description": "{{機能の説明}}",
-      "dependencies": "{{依存する機能の ID。例: F002,F003}}",
-      "behavior": "{{実証可能な振る舞い。『認証を実装する』ではなく『有効な資格情報で POST /login が 200 と JWT を返す』}}",
-      "verification": "{{検証コマンドまたは手順。例: {{TEST_CMD}} -k test_login_success}}",
+      "name": "開発サーバ起動",
+      "description": "pnpm と Vite で開発サーバを 3210 番ポートに固定起動する（SRS-F-001, 3.2）。",
+      "dependencies": "",
+      "behavior": "リポジトリルートで pnpm dev を実行すると開発サーバが起動し、標準出力に http://localhost:3210 が含まれる。ポートの自動フォールバックはしない。",
+      "verification": "pnpm install && pnpm dev を起動し、ログに localhost:3210 があること。curl -sS -o /dev/null -w '%{http_code} %{url_effective}\\n' http://localhost:3210/ が 200 で、接続先がポート 3210 であること。",
       "passes": false
     },
     {
       "id": "F002",
-      "name": "{{}}",
-      "description": "{{}}",
-      "dependencies": "{{}}",
-      "behavior": "{{}}",
-      "verification": "{{}}",
+      "name": "完成 HTML の返却",
+      "description": "GET / がソース Markdown を反映した完成 HTML を返す。ブラウザ側で Markdown を再取得しない（SRS 3.2, SRS-F-002）。",
+      "dependencies": "F001",
+      "behavior": "http://localhost:3210/ への GET が 200 と Content-Type: text/html; charset=utf-8 を返し、レスポンス HTML 内にソース Markdown の本文（例: サイクリング, 応用情報技術者）が含まれる。HTML が骨組みだけで contents/*.md を fetch していない。",
+      "verification": "curl -sS -D - http://localhost:3210/ -o /tmp/self-intro.html でステータス 200、Content-Type に text/html と charset=utf-8。/tmp/self-intro.html が <!doctype html または <html で始まり、grep -F サイクリング と grep -F 応用情報技術者 がヒットする。レスポンスおよび index.html から contents/self-introduction.md への fetch/XHR が無いこと。",
+      "passes": false
+    },
+    {
+      "id": "F003",
+      "name": "unified による Markdown 変換",
+      "description": "変換は unified + remark-parse を中核とし、正規表現だけで HTML にしない（SRS-F-003, 2.4）。",
+      "dependencies": "F002",
+      "behavior": "ソースは unified と remark-parse を import してパイプライン処理する。frontmatter・見出し・段落・リストを AST として扱う。ページ本文を TypeScript にハードコードしない。Markdown 中の生 HTML は出力に通さない。",
+      "verification": "src 配下（または同等）に unified と remark-parse の import があること。grep -R \"from \\\"unified\\\"\" および remark-parse がヒットし、md 全体を正規表現置換して HTML にする実装が無いこと。contents/self-introduction.md の見出し文言が TS に複製されていないこと。ソース Markdown に <script> 相当を一時追加しても出力 HTML で実行タグにならないこと（確認後は元に戻す）。",
+      "passes": false
+    },
+    {
+      "id": "F004",
+      "name": "ヘッダ・氏名・プレースホルダ",
+      "description": "frontmatter の name と URL、見出しの {name} 置換をページ先頭に出す（SRS-F-004, 3.1.1, 3.1.2）。",
+      "dependencies": "F003",
+      "behavior": "ページに氏名 gnkm が 1 つの h1 として現れ、視覚的に巨大タイトルが二重にならない。GitHub / Blog / X のテキストラベルリンクがそれぞれ https://github.com/gnkm , https://tech.gnkm.info/ , https://x.com/gnkmxjp を指す。{name} は展開され、生の {name} が残らない。",
+      "verification": "curl -sS http://localhost:3210/ の HTML で: (1) grep -c '<h1' が 1。(2) h1 内が gnkm。(3) grep -F '{name}' がヒットしない。(4) 3 URL が href に存在し、リンクテキストがアイコンではなく GitHub / Blog / X のいずれかであること。",
+      "passes": false
+    },
+    {
+      "id": "F005",
+      "name": "本文の欠落なしとセクション構成",
+      "description": "ソースの情報がすべて見え、見出し 2 ごとにセクションが分かれる（SRS-F-002, SRS-F-005, 9.2）。",
+      "dependencies": "F004",
+      "behavior": "趣味（サイクリング, 生成 AI と戯れる）、現在の業務内容（Yocto, React + Express.js）、スキル（Python, LightGBM 等）、資格の文言がソースと対応して存在する。dotfiles の URL が見える。見出しレベルを飛ばさない。",
+      "verification": "curl -sS http://localhost:3210/ に対し次がすべて含まれること: サイクリング, 生成 AI, Yocto, React + Express.js, LightGBM, fish, 応用情報技術者, G 検定, TOEIC, 生成 AI パスポート, github.com/gnkm/dotfiles。見出し 2 に相当する 趣味, 現在の業務内容, スキル, 資格 がマークアップ上のセクション見出しとして存在すること。",
+      "passes": false
+    },
+    {
+      "id": "F006",
+      "name": "箇条書きの密度レイアウト",
+      "description": "リストを 1 列の長い黒丸にしない。資格は表、スキルはグループ、課金はタグ（SRS 3.1.3）。",
+      "dependencies": "F005",
+      "behavior": "資格の各項目が表の行（または同等の密な行）として 1:1 で出る。スキルの親（Python 等）と子（LightGBM 等）がグループまたは 2 列で、単一 ul の縦並びだけではない。課金リスト（ChatGPT から Aqua Voice まで）がタグとして横並び・折り返しされる。リスト文言は省略しない。",
+      "verification": "curl -sS http://localhost:3210/ で ChatGPT, Claude, Gemini, Cursor, FireCrawl, Greptile, Aqua Voice がすべて存在すること。資格セクションに <table> がある（または role で表相当）。スキルが入れ子 ul の 1 列だけでないこと（タグ、表、グリッドのいずれかのマークアップ）。ページ全体が単一の <ul> だけの本文になっていないこと。",
+      "passes": false
+    },
+    {
+      "id": "F007",
+      "name": "外部リンクの開き方",
+      "description": "http(s) URL は新しいタブで、noopener 付き（SRS 3.1.4）。",
+      "dependencies": "F004",
+      "behavior": "ページ内の http:// または https:// リンクは target=\"_blank\" と rel=\"noopener noreferrer\" を持つ。空のリンクは無い。",
+      "verification": "curl -sS http://localhost:3210/ から href=\"http を含む a 要素を抜き、すべてが target=\"_blank\" かつ rel に noopener と noreferrer を含むこと。href が空の a が無いこと。",
+      "passes": false
+    },
+    {
+      "id": "F008",
+      "name": "編集的な 1 枚デザイン",
+      "description": "SRS 6 章のトークンと禁止事項に従う見た目。フッター無し。A4 相当幅で中央寄せ。",
+      "dependencies": "F006",
+      "behavior": "背景 #f6f4ef、本文色 #1c1b19、アクセント #2c4a6e が CSS カスタムプロパティ経由で使われる。ヘッダは左氏名・右リンク・下罫線。趣味の h3 ブロックは 1〜2 列グリッド。絵文字・プログレスバー・大きなアイコン・ガラスモーフィズム・ヒーロー画像が無い。ページ末尾は資格セクションで、独立フッターが無い。",
+      "verification": "配信 CSS（curl した HTML が参照する stylesheet）に -- で始まるトークンとして #f6f4ef, #1c1b19, #2c4a6e が含まれること。HTML に progress, role=progressbar, 絵文字用の大きな icon クラスが無いこと。h2 相当のあとフッター要素でサイト共通フッターを置いていないこと。ブラウザで http://localhost:3210/ を開き、ランディングページ風の巨大ヒーローが無いことを目視する。",
+      "passes": false
+    },
+    {
+      "id": "F009",
+      "name": "印刷時 A4 縦 1 ページ",
+      "description": "Chromium の印刷プレビューで現行 Markdown 分量が A4 縦 1 枚に収まる（SRS-F-007, 5 章, 9.3）。",
+      "dependencies": "F008",
+      "behavior": "CSS に @page { size: A4 portrait; } と 10mm〜14mm の余白がある。印刷時フォントは 9pt 未満にしない。セクションに break-inside: avoid がある。Chrome 印刷プレビュー（ヘッダーとフッター off、A4 縦）のページ数が 1 で、本文が切れない。",
+      "verification": "配信 CSS に size: A4 と portrait、余白 10mm〜14mm、break-inside: avoid、印刷時 font-size が 9pt 以上であることを確認する。Google Chrome で http://localhost:3210/ を開き、印刷プレビュー: 用紙 A4・縦・ヘッダーとフッター off。ページ数が 1 であること。本文（資格の最終行まで）が切れていないこと。",
+      "passes": false
+    },
+    {
+      "id": "F010",
+      "name": "ソース Markdown の追従",
+      "description": "contents/self-introduction.md の保存でページが更新される（SRS-F-006, 3.2, 9.4）。",
+      "dependencies": "F002",
+      "behavior": "ソース Markdown に段落を 1 行追加して保存すると、手動リロードなし、または自動リロード後にその行が GET / の HTML に現れる。特定の日本語見出し名だけに依存した変換にはしない（資格・スキル等の例外分岐は可）。",
+      "verification": "contents/self-introduction.md の末尾に唯一の文字列 FEATURE_LIST_HMR_PROBE を段落として追加して保存する。数秒待ち curl -sS http://localhost:3210/ | grep -F FEATURE_LIST_HMR_PROBE がヒットすること。確認後、追加行を必ず元に戻す。",
+      "passes": false
+    },
+    {
+      "id": "F011",
+      "name": "入力異常の表示",
+      "description": "ソース欠落・壊れた YAML・name 欠落を空の成功ページにしない（SRS 3.3）。",
+      "dependencies": "F001",
+      "behavior": "ファイルが無い、または YAML が壊れている、または name が無いとき、HTTP 500 相当かページ内エラーメッセージを出し、コンソールまたはレスポンスに原因が分かる。空の 200 ページで成功扱いしない。タイトルを Untitled にしない。",
+      "verification": "pnpm dev 起動中に (1) contents/self-introduction.md を一時退避して GET / を curl。200 かつ中身がほぼ空、ではないこと（5xx またはエラー文言）。(2) ファイルを戻す。(3) name 行だけ欠落したコピーで同様にエラーになること（確認後は正規ファイルに戻す）。",
+      "passes": false
+    },
+    {
+      "id": "F012",
+      "name": "型検査と Lint",
+      "description": "Biome と TypeScript strict が通る。pnpm check を提供する（SRS-Q-001〜006, 9.1）。",
+      "dependencies": "F001",
+      "behavior": "tsconfig が strict: true。pnpm check が biome check と tsc --noEmit を実行し、終了コード 0。any 常用が無い。",
+      "verification": "pnpm check が exit 0。未整備なら pnpm exec biome check . と pnpm exec tsc --noEmit がどちらも exit 0。tsconfig に \"strict\": true。src で : any および as any が無いこと。",
       "passes": false
     }
   ]
