@@ -1,0 +1,13 @@
+---
+description: 機能は1つずつ。verifier なしで完了にしない。仕様を実装都合で書き換えない。
+alwaysApply: true
+---
+
+# 実装ループ
+
+- 一度に実装するのは `.agent/feature_list.json` の **1 項目**だけ（依存が満たされた `passes: false` の最小 ID）
+- その項目の `verification` を実行するまで「完了」と言わない
+- `passes` を `true` にするのは verifier サブエージェントが通したあとだけ
+- `feature_list.json` は `passes` 以外を編集しない。SRS / seed を実装の都合で書き換えない
+- 非ゴール（React, Tailwind, CMS, 複数ページ）を足さない
+- セッション終了前に `.agent/progress.md` を更新する
