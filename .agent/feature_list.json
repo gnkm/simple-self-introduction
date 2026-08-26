@@ -1,0 +1,27 @@
+{
+  "_readme": [
+    "完了判定の基準。仕様書から E2E で確認できる振る舞いを列挙する。",
+    "変更してよいのは passes の値だけ。機能の記述を削除・編集しない。",
+    "passes を true にするのは、verification を実際に実行して通ったあとだけ。"
+  ],
+  "features": [
+    {
+      "id": "F001",
+      "name": "{{機能名}}",
+      "description": "{{機能の説明}}",
+      "dependencies": "{{依存する機能の ID。例: F002,F003}}",
+      "behavior": "{{実証可能な振る舞い。『認証を実装する』ではなく『有効な資格情報で POST /login が 200 と JWT を返す』}}",
+      "verification": "{{検証コマンドまたは手順。例: {{TEST_CMD}} -k test_login_success}}",
+      "passes": false
+    },
+    {
+      "id": "F002",
+      "name": "{{}}",
+      "description": "{{}}",
+      "dependencies": "{{}}",
+      "behavior": "{{}}",
+      "verification": "{{}}",
+      "passes": false
+    }
+  ]
+}
