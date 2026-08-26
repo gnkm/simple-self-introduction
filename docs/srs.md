@@ -342,6 +342,9 @@ Chromium の印刷プレビューで用紙 A4、縦、余白既定（または C
 | SRS-Q-006 | `pnpm exec tsc --noEmit` がエラーなし |
 | SRS-Q-007 | 例外を空 `catch` で握りつぶさない |
 | SRS-Q-008 | 秘密情報・個人の連絡先（電話・メール）を新たに埋めない。ソース Markdown にあるものだけ出す |
+| SRS-Q-009 | GitHub Actions が `pull_request` と default branch（`main`）への `push` で `pnpm check` を実行する。pnpm の lockfile を尊重する。Node バージョンは Vite の要求に固定する |
+
+実装の着手順: **開発基盤（ローカルの `pnpm check`）→ CI → 開発サーバ → ページ機能**。品質ゲートをアプリより先に通す。
 
 テスト:
 
@@ -445,7 +448,7 @@ Chrome で印刷プレビュー:
 
 | 等級 | 意味 | 対象の例 |
 | --- | --- | --- |
-| 必須 | 未達なら未完成 | 起動、表示、A4 1 枚、unified、Vite:3210、情報欠落なし |
+| 必須 | 未達なら未完成 | 開発基盤、CI、起動、表示、A4 1 枚、unified、Vite:3210、情報欠落なし |
 | 望ましい | 品質差になる | トークンどおりの色、HMR、`pnpm check`、見出し 2 列 |
 | 任意 | 本バージョンでなくてもよい | ユニットテスト、`pnpm build` の静的ホスト |
 
