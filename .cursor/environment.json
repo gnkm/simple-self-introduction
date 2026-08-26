@@ -1,5 +1,6 @@
 {
   "install": "pnpm install",
+  "start": "bash .cursor/sync-latest-main.sh",
   "terminals": [
     {
       "name": "dev",

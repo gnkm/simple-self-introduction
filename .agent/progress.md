@@ -11,8 +11,9 @@
 - 完了判定: `.agent/feature_list.json`（F001–F003 `passes: true`。F004–F013 は false）
 - `pnpm check`（`biome check .` と `tsc --noEmit`）
 - `pnpm build`（型検査付き Vite 本番ビルド。完成 HTML ではない）
-- `pnpm dev`（Vite。ポート 3210・`strictPort: true`・`host: true`）
+- `pnpm dev`（Vite。ポート 3210・`strictPort: true`・`host: "localhost"`。IPv4/IPv6 ループバック）
 - GitHub Actions `.github/workflows/ci.yml`（`pull_request` と `main` への `push` で `pnpm check`）
+- Cloud Agent `start`: `.cursor/sync-latest-main.sh` が `origin/main` を fetch し、クリーンな default branch なら fast-forward する
 
 ## いま動いていないもの
 
@@ -25,6 +26,15 @@
 2. そのあと **F005 unified による Markdown 変換**。
 
 ## 直近のセッションでやったこと
+
+### 2026-08-26（ハーネス: Cloud 起動時の最新取得）
+
+- プレビルド Build は `gitSetup: reuse` のため、作業ツリーの `main` が remote より古い
+- このセッション開始時も `main` が origin より 3 コミット遅れており、未 fetch だと完了済み F002 に再着手するところだった
+- `.cursor/sync-latest-main.sh` を追加し、`environment.json` の `start` から実行
+- `AGENTS.md` / implement-next-feature / `agent-loop.mdc` で、対象選定前の fetch を必須にした
+- feature ブランチ・dirty・分岐した local `main` は checkout しない。クリーンな ancestor だけ `git merge --ff-only`
+- 検証: 古い main（F002 false）→ origin/main（F002 true）、feature / dirty / diverged は維持、detached は FF、`pnpm check` exit 0。verifier 合格
 
 ### 2026-08-26（F003）
 
@@ -55,3 +65,4 @@
 - TypeScript の npm 最新は 7.0.2 だが、Vite 8 テンプレ相当の 5.9.3 を採用した（`pnpm check` / `build` は通る）
 - CI の `node-version: 22` は latest 22.x。Vite は `>=22.12.0`。現行の GitHub エイリアスでは矛盾しない
 - この環境の `localhost` は IPv6 (`::1`) が先。`host` 未指定だと `127.0.0.1:3210` に繋がらない
+- Cloud Agent は Environment Build の recorded commit を再利用する。公式の always-pull は Builds タブの Staleness threshold `0`。リポジトリ側でも `start` で fetch する

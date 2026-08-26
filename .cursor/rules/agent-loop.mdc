@@ -5,6 +5,7 @@ alwaysApply: true
 
 # 実装ループ
 
+- 実装対象を選ぶ前に `.cursor/sync-latest-main.sh` で `origin/main` を取り込む。古い `feature_list.json` で完了済みタスクに着手しない
 - 一度に実装するのは `.agent/feature_list.json` の **1 項目**だけ（依存が満たされた `passes: false` の最小 ID）
 - その項目の `verification` を実行するまで「完了」と言わない
 - `passes` を `true` にするのは verifier サブエージェントが通したあとだけ
