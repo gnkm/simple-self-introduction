@@ -28,8 +28,8 @@
 
 ### 2026-08-26（F003）
 
-- `vite.config.ts`: `server.port: 3210`、`strictPort: true`、`server.host: true`
-- `host: true` は IPv6 の localhost だけだと `127.0.0.1` に届かないため（SRS 3.2）
+- `vite.config.ts`: `server.port: 3210`、`strictPort: true`、`host: "localhost"`
+- IPv4 / IPv6 ループバックの両方だけ待つプラグイン（`host: true` は LAN 公開になるため使わない）
 - 検証: `pnpm install && pnpm dev` のログに `http://localhost:3210/`。`curl` が `200 http://localhost:3210/`。`127.0.0.1:3210` も 200。使用中ポートではフォールバックせず失敗
 - verifier 合格のため F003 の `passes` を true にした
 
