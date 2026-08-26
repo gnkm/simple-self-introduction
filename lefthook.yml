@@ -9,8 +9,8 @@ pre-commit:
       # glob は相対パス全体に対して照合される。`**/` はディレクトリを1つ以上要求するため
       # ルート直下の package.json が漏れる。逆に `**/` 無しだけでは入れ子が漏れる。両方書く。
       glob:
-        - "{uv.lock,pnpm-lock.yaml,package.json,package-lock.json,pyproject.toml}"
-        - "**/{uv.lock,pnpm-lock.yaml,package.json,package-lock.json,pyproject.toml}"
+        - "{package.json,package-lock.json}"
+        - "**/{package.json,package-lock.json}"
       run: osv-scanner scan source -r .
     gitleaks:
       run: gitleaks git --pre-commit --staged --no-banner --redact -v
