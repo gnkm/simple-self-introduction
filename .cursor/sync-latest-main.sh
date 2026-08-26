@@ -35,8 +35,8 @@ for _attempt in 1 2 3 4; do
 done
 
 if [ "$fetch_ok" -ne 1 ]; then
-  log "warn: git fetch を諦めました。作業ツリーは更新していません"
-  exit 0
+  log "error: git fetch に失敗したため起動を中止します"
+  exit 1
 fi
 
 REMOTE_REF="${REMOTE}/${DEFAULT_BRANCH}"
@@ -76,6 +76,14 @@ if [ "$BRANCH" = "$DEFAULT_BRANCH" ]; then
   git merge --ff-only "$REMOTE_REF"
 else
   # デタッチ + 古い main 相当。Build の reuse checkout を想定する。
+  # 既存 local main が分岐しているときは -B で付け替えない。
+  if git show-ref --verify --quiet "refs/heads/${DEFAULT_BRANCH}"; then
+    LOCAL_MAIN_SHA="$(git rev-parse "refs/heads/${DEFAULT_BRANCH}")"
+    if ! git merge-base --is-ancestor "$LOCAL_MAIN_SHA" "$REMOTE_REF"; then
+      log "skip checkout: local ${DEFAULT_BRANCH} が ${REMOTE_REF} から分岐している"
+      exit 0
+    fi
+  fi
   git checkout -B "$DEFAULT_BRANCH" "$REMOTE_REF"
 fi
 
