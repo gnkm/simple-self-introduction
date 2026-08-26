@@ -30,7 +30,7 @@
       "dependencies": "F001",
       "behavior": "リポジトリルートで pnpm dev を実行すると開発サーバが起動し、標準出力に http://localhost:3210 が含まれる。ポートの自動フォールバックはしない。",
       "verification": "pnpm install && pnpm dev を起動し、ログに localhost:3210 があること。curl -sS -o /dev/null -w '%{http_code} %{url_effective}\\n' http://localhost:3210/ が 200 で、接続先がポート 3210 であること。",
-      "passes": false
+      "passes": true
     },
     {
       "id": "F004",
