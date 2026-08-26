@@ -1,9 +1,9 @@
 {
-  "install": "{{INSTALL_CMD}}",
+  "install": "pnpm install",
   "terminals": [
     {
       "name": "dev",
-      "command": "{{START_CMD}}"
+      "command": "pnpm dev"
     }
   ]
 }
