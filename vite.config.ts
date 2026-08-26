@@ -1,6 +1,6 @@
 import http from "node:http";
 import { defineConfig, type Plugin } from "vite";
-import { selfIntroPlugin } from "./src/vite-plugin-self-intro";
+import { selfIntroPlugin } from "./src/vite-plugin-self-intro.ts";
 
 const DEV_PORT = 3210;
 
