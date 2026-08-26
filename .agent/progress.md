@@ -66,7 +66,7 @@
 ### 2026-08-26（F001）
 
 - F001 開発環境の基盤: Vite 8.2.2、TypeScript 5.9.3（strict）、scripts `dev` / `build` / `check`
-- 入口はプレースホルダの `index.html` と `src/main.ts`（`export {}`）。完成ページは未実装
+- 入口はプレースホルダの `index.html` と `src/main.ts`（`export {}`）。完成 HTML は未実装
 - 検証: `test -f tsconfig.json && test -f vite.config.ts`、strict、3210、scripts、`pnpm check` exit 0、src に `: any` / `as any` なし。追加で `pnpm build` exit 0
 - verifier 合格のため F001 の `passes` を true にした
 
