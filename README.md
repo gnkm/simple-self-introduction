@@ -9,7 +9,15 @@ pnpm install
 pnpm dev
 ```
 
-[http://localhost:3210](http://localhost:3210) が `contents/self-introduction.md` のページを返す。
+[http://localhost:3210](http://localhost:3210) が `contents/self-introduction.md` のページを返す。開発サーバのポートは 3210 に固定する。
+
+## 検査
+
+```bash
+pnpm check
+```
+
+Biome と TypeScript（`tsc --noEmit`）を実行する。本番ビルドは `pnpm build`。
 
 ## PDF
 

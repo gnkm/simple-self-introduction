@@ -12,7 +12,7 @@
       "dependencies": "",
       "behavior": "package.json に scripts.dev / scripts.build / scripts.check がある。check は biome check と tsc --noEmit を実行する。tsconfig は strict: true。vite.config が存在し、開発サーバのポートを 3210 に固定する設定を含む。pnpm check が終了コード 0。src に : any および as any が無い。",
       "verification": "test -f tsconfig.json && test -f vite.config.ts。tsconfig に \"strict\": true。vite.config に 3210。package.json の scripts に dev, build, check。pnpm check が exit 0。src が存在するなら grep -R \": any\\|as any\" src がヒットしない。",
-      "passes": false
+      "passes": true
     },
     {
       "id": "F002",
