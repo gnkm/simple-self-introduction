@@ -39,7 +39,7 @@
       "dependencies": "F003",
       "behavior": "http://localhost:3210/ への GET が 200 と Content-Type: text/html; charset=utf-8 を返し、レスポンス HTML 内にソース Markdown の本文（例: サイクリング, 応用情報技術者）が含まれる。HTML が骨組みだけで contents/*.md を fetch していない。",
       "verification": "curl -sS -D - http://localhost:3210/ -o /tmp/self-intro.html でステータス 200、Content-Type に text/html と charset=utf-8。/tmp/self-intro.html が <!doctype html または <html で始まり、grep -F サイクリング と grep -F 応用情報技術者 がヒットする。レスポンスおよび index.html から contents/self-introduction.md への fetch/XHR が無いこと。",
-      "passes": false
+      "passes": true
     },
     {
       "id": "F005",

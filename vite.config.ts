@@ -1,5 +1,6 @@
 import http from "node:http";
 import { defineConfig, type Plugin } from "vite";
+import { selfIntroPlugin } from "./src/vite-plugin-self-intro.ts";
 
 const DEV_PORT = 3210;
 
@@ -42,7 +43,7 @@ function bindLoopbackOnly(): Plugin {
 }
 
 export default defineConfig({
-  plugins: [bindLoopbackOnly()],
+  plugins: [selfIntroPlugin(), bindLoopbackOnly()],
   server: {
     host: "localhost",
     port: DEV_PORT,
