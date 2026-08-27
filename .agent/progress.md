@@ -8,7 +8,7 @@
 ## いま動いているもの
 
 - 仕様: `docs/srs.md`
-- 完了判定: `.agent/feature_list.json`（F001–F008 `passes: true`。F009–F013 は false）
+- 完了判定: `.agent/feature_list.json`（F001–F009 `passes: true`。F010–F013 は false）
 - `pnpm check`（`biome check .` と `tsc --noEmit`）
 - `pnpm build`（型検査付き Vite 本番ビルド）
 - `pnpm dev`（Vite。ポート 3210・`strictPort: true`・`host: "localhost"`。IPv4/IPv6 ループバック）
@@ -16,6 +16,7 @@
 - ページ先頭ヘッダ: frontmatter の `name` を 1 つの `h1` に出し、存在する URL を GitHub / Blog / X のテキストラベルでリンクする。本文の `{name}` は展開する。Markdown の見出し 1 はヘッダに統合
 - 見出し 2 から次の見出し 2 直前までを `<section>` で包む。趣味 / 現在の業務内容 / スキル / 資格の文言はソースどおり。見出し名では分岐しない
 - 箇条書きは 1 列の長い黒丸にしない。資格は `<table>`、スキルは `.skill-groups` グリッド＋子タグ、「課金しています」直後は `.tags` 横並び。その他の入れ子は親＋子タグ。リスト文言は省略しない
+- ページ内の http(s) リンクは `target="_blank"` と `rel="noopener noreferrer"`。単独行 URL は自動リンク。空の href の a は残さない
 - GET `/list-layout.css` はプラグインが `text/css` で生 CSS を返す（`src` 直リンクだと Vite が JS モジュールにする）
 - GitHub Actions `.github/workflows/ci.yml`（`pull_request` と `main` への `push` で `pnpm check`）
 - Cloud Agent `start`: `.cursor/sync-latest-main.sh` が `origin/main` を fetch し、クリーンな default branch なら fast-forward する
@@ -23,15 +24,20 @@
 ## いま動いていないもの
 
 - 編集的デザインと印刷 CSS（F010 / F011）
-- 外部リンクの `target` / `rel`（F009）
 - ソース追従と入力異常表示
 
 ## 次にやること
 
-1. **F009 外部リンクの開き方** — 依存 F006 完了。http(s) は `target="_blank"` と `rel="noopener noreferrer"`。
-2. そのあと **F010 編集的な 1 枚デザイン**（F008 依存）。
+1. **F010 編集的な 1 枚デザイン** — 依存 F008 完了。トークン・ヘッダ配置・禁止装飾・フッター無し。
+2. そのあと **F011 印刷時 A4 縦 1 ページ**（F010 依存）。並行候補: F012 / F013。
 
 ## 直近のセッションでやったこと
+
+### 2026-08-27（F009）
+
+- 開始時に `.cursor/sync-latest-main.sh` で `origin/main`（F008 マージ済み `ab00028`）を確認してから着手
+- ヘッダと本文の http(s) `a` に `target="_blank"` と `rel="noopener noreferrer"` を付ける。単独行 URL は mdast で link 化する。空 href は unwrap
+- 検証: `pnpm check` exit 0。GET `/` の 4 本の http(s) リンク（GitHub / Blog / X / dotfiles）がすべて属性付き。空 href なし。verifier PASS のため F009 の `passes` を true にした
 
 ### 2026-08-27（F008）
 
