@@ -9,6 +9,7 @@ import { markExternalLinks } from "./markExternalLinks.ts";
 import { parseMarkdown } from "./parseMarkdown.ts";
 import { removeYamlAndTitleHeadings } from "./prepareBodyAst.ts";
 import { wrapHeading2Sections } from "./wrapHeading2Sections.ts";
+import { wrapHeading3Blocks } from "./wrapHeading3Blocks.ts";
 
 export type ConvertedPage = {
   frontmatter: Frontmatter;
@@ -31,6 +32,7 @@ export function convertMarkdownToPage(source: string): ConvertedPage {
     .runSync(markdownAst);
   wrapHeading2Sections(htmlAst);
   densifyLists(htmlAst);
+  wrapHeading3Blocks(htmlAst);
   markExternalLinks(htmlAst);
 
   return {

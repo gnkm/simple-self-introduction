@@ -5,6 +5,7 @@ import { convertMarkdownToPage } from "./markdown/convertMarkdown.ts";
 import { readSourceMarkdown } from "./markdown/readSource.ts";
 import {
   LIST_LAYOUT_STYLESHEET_HREF,
+  PAGE_STYLESHEET_HREF,
   renderPageHtml,
 } from "./render/pageHtml.ts";
 
@@ -21,12 +22,13 @@ function isPageRequest(url: string | undefined): boolean {
   return pathname === "/" || pathname === "/index.html";
 }
 
-function isStylesheetRequest(url: string | undefined): boolean {
-  return requestPath(url) === LIST_LAYOUT_STYLESHEET_HREF;
-}
+const STYLESHEET_FILES: Record<string, string> = {
+  [PAGE_STYLESHEET_HREF]: "src/styles/page.css",
+  [LIST_LAYOUT_STYLESHEET_HREF]: "src/styles/list-layout.css",
+};
 
-function resolveListLayoutCssPath(rootDir: string): string {
-  return path.resolve(rootDir, "src/styles/list-layout.css");
+function stylesheetRelativePath(url: string | undefined): string | undefined {
+  return STYLESHEET_FILES[requestPath(url)];
 }
 
 /**
@@ -41,10 +43,11 @@ export function selfIntroPlugin(): Plugin {
           next();
           return;
         }
-        if (isStylesheetRequest(req.url)) {
+        const stylesheetPath = stylesheetRelativePath(req.url);
+        if (stylesheetPath !== undefined) {
           void (async () => {
             const css = await readFile(
-              resolveListLayoutCssPath(server.config.root),
+              path.resolve(server.config.root, stylesheetPath),
               "utf8",
             );
             res.statusCode = 200;
