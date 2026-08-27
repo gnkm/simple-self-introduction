@@ -1,5 +1,6 @@
 import type { Frontmatter } from "../markdown/frontmatter.ts";
 import { escapeHtml } from "./escapeHtml.ts";
+import { externalLinkAttributes } from "./externalLink.ts";
 
 export const LIST_LAYOUT_STYLESHEET_HREF = "/list-layout.css";
 
@@ -15,7 +16,10 @@ function renderHeaderLinks(frontmatter: Frontmatter): string {
     if (href === undefined) {
       return [];
     }
-    return [`<a href="${escapeHtml(href)}">${spec.label}</a>`];
+    const attrs = externalLinkAttributes(href);
+    const extra =
+      attrs === undefined ? "" : ` target="${attrs.target}" rel="${attrs.rel}"`;
+    return [`<a href="${escapeHtml(href)}"${extra}>${spec.label}</a>`];
   });
   if (anchors.length === 0) {
     return "";

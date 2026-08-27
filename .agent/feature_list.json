@@ -84,7 +84,7 @@
       "dependencies": "F006",
       "behavior": "ページ内の http:// または https:// リンクは target=\"_blank\" と rel=\"noopener noreferrer\" を持つ。空のリンクは無い。",
       "verification": "curl -sS http://localhost:3210/ から href=\"http を含む a 要素を抜き、すべてが target=\"_blank\" かつ rel に noopener と noreferrer を含むこと。href が空の a が無いこと。",
-      "passes": false
+      "passes": true
     },
     {
       "id": "F010",
