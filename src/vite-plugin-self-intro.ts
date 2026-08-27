@@ -1,4 +1,5 @@
 import type { Plugin } from "vite";
+import { convertMarkdownToHtml } from "./markdown/convertMarkdown.ts";
 import { readSourceMarkdown } from "./markdown/readSource.ts";
 import { renderPageHtml } from "./render/pageHtml.ts";
 
@@ -34,7 +35,8 @@ export function selfIntroPlugin(): Plugin {
 
         void (async () => {
           const markdown = await readSourceMarkdown(server.config.root);
-          const html = renderPageHtml(markdown);
+          const bodyHtml = convertMarkdownToHtml(markdown);
+          const html = renderPageHtml(bodyHtml);
           res.statusCode = 200;
           res.setHeader("Content-Type", "text/html; charset=utf-8");
           if (req.method === "HEAD") {

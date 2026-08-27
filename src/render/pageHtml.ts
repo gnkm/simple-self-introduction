@@ -1,7 +1,4 @@
-import { escapeHtml } from "./escapeHtml.ts";
-
-export function renderPageHtml(markdownSource: string): string {
-  const body = escapeHtml(markdownSource);
+export function renderPageHtml(bodyHtml: string): string {
   return `<!doctype html>
 <html lang="ja">
   <head>
@@ -10,7 +7,7 @@ export function renderPageHtml(markdownSource: string): string {
     <title>Self Introduction</title>
   </head>
   <body>
-    <main><pre>${body}</pre></main>
+    <main>${bodyHtml}</main>
   </body>
 </html>
 `;
