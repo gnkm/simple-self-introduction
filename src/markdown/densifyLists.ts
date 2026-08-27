@@ -113,28 +113,45 @@ function hasNestedList(list: HastElement): boolean {
   return listItems(list).some((item) => itemParts(item).nested !== undefined);
 }
 
-function listToTags(list: HastElement): HastElement {
-  const items = listItems(list).map((item) => {
-    const { label, nested } = itemParts(item);
-    const content = [...label];
-    if (nested !== undefined) {
-      for (const child of listItems(nested)) {
-        const nestedLabel = itemParts(child).label;
-        if (content.length > 0 && nestedLabel.length > 0) {
-          content.push({ type: "text", value: " " });
-        }
-        content.push(...nestedLabel);
-      }
+function appendSeparated(target: HastChild[], extra: HastChild[]): void {
+  if (extra.length === 0) {
+    return;
+  }
+  if (target.length > 0) {
+    target.push({ type: "text", value: " " });
+  }
+  target.push(...extra);
+}
+
+/** 見える階層は 2 段まで。それより深い文言は畳んで残す（省略しない）。 */
+function phrasingWithDescendants(item: HastElement): HastChild[] {
+  const { label, nested } = itemParts(item);
+  const content = [...label];
+  if (nested !== undefined) {
+    for (const child of listItems(nested)) {
+      appendSeparated(content, phrasingWithDescendants(child));
     }
-    return el("li", content);
-  });
+  }
+  return content;
+}
+
+function listToTags(list: HastElement): HastElement {
+  const items: HastElement[] = [];
+  for (const item of listItems(list)) {
+    const { label, nested } = itemParts(item);
+    if (label.length > 0) {
+      items.push(el("li", label));
+    }
+    if (nested !== undefined) {
+      items.push(...listItems(listToTags(nested)));
+    }
+  }
   return el("ul", items, ["tags"]);
 }
 
 function listToTable(list: HastElement): HastElement {
   const rows = listItems(list).map((item) => {
-    const { label } = itemParts(item);
-    return el("tr", [el("td", label)]);
+    return el("tr", [el("td", phrasingWithDescendants(item))]);
   });
   return el("table", [el("tbody", rows)]);
 }
@@ -165,8 +182,7 @@ function listToNestedGroups(list: HastElement): HastElement {
 
 function listToFlatGrid(list: HastElement): HastElement {
   const items = listItems(list).map((item) => {
-    const { label } = itemParts(item);
-    return el("li", label);
+    return el("li", phrasingWithDescendants(item));
   });
   return el("ul", items, ["list-grid"]);
 }
