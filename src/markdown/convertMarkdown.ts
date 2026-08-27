@@ -5,6 +5,7 @@ import { expandNamePlaceholder } from "./expandName.ts";
 import { extractFrontmatter, type Frontmatter } from "./frontmatter.ts";
 import { parseMarkdown } from "./parseMarkdown.ts";
 import { removeYamlAndTitleHeadings } from "./prepareBodyAst.ts";
+import { wrapHeading2Sections } from "./wrapHeading2Sections.ts";
 
 export type ConvertedPage = {
   frontmatter: Frontmatter;
@@ -24,6 +25,7 @@ export function convertMarkdownToPage(source: string): ConvertedPage {
   const htmlAst = unified()
     .use(remarkRehype, { allowDangerousHtml: false })
     .runSync(markdownAst);
+  wrapHeading2Sections(htmlAst);
 
   return {
     frontmatter,

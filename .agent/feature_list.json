@@ -66,7 +66,7 @@
       "dependencies": "F006",
       "behavior": "趣味（サイクリング, 生成 AI と戯れる）、現在の業務内容（Yocto, React + Express.js）、スキル（Python, LightGBM 等）、資格の文言がソースと対応して存在する。dotfiles の URL が見える。見出しレベルを飛ばさない。",
       "verification": "curl -sS http://localhost:3210/ に対し次がすべて含まれること: サイクリング, 生成 AI, Yocto, React + Express.js, LightGBM, fish, 応用情報技術者, G 検定, TOEIC, 生成 AI パスポート, github.com/gnkm/dotfiles。見出し 2 に相当する 趣味, 現在の業務内容, スキル, 資格 がマークアップ上のセクション見出しとして存在すること。",
-      "passes": false
+      "passes": true
     },
     {
       "id": "F008",

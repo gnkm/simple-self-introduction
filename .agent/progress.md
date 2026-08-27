@@ -8,27 +8,34 @@
 ## いま動いているもの
 
 - 仕様: `docs/srs.md`
-- 完了判定: `.agent/feature_list.json`（F001–F006 `passes: true`。F007–F013 は false）
+- 完了判定: `.agent/feature_list.json`（F001–F007 `passes: true`。F008–F013 は false）
 - `pnpm check`（`biome check .` と `tsc --noEmit`）
 - `pnpm build`（型検査付き Vite 本番ビルド）
 - `pnpm dev`（Vite。ポート 3210・`strictPort: true`・`host: "localhost"`。IPv4/IPv6 ループバック）
 - GET `/` が `contents/self-introduction.md` を unified（`remark-parse` → `remark-frontmatter` → `remark-rehype` → `rehype-stringify`）で HTML にして返す。生 HTML は通さない。ブラウザで md を fetch しない
 - ページ先頭ヘッダ: frontmatter の `name` を 1 つの `h1` に出し、存在する URL を GitHub / Blog / X のテキストラベルでリンクする。本文の `{name}` は展開する。Markdown の見出し 1 はヘッダに統合
+- 見出し 2 から次の見出し 2 直前までを `<section>` で包む。趣味 / 現在の業務内容 / スキル / 資格の文言はソースどおり。見出し名では分岐しない
 - GitHub Actions `.github/workflows/ci.yml`（`pull_request` と `main` への `push` で `pnpm check`）
 - Cloud Agent `start`: `.cursor/sync-latest-main.sh` が `origin/main` を fetch し、クリーンな default branch なら fast-forward する
 
 ## いま動いていないもの
 
-- セクション構成・箇条書きレイアウト・印刷 CSS
+- 箇条書きの密度レイアウト（F008）と編集的デザイン・印刷 CSS（F010 / F011）
 - 外部リンクの `target` / `rel`（F009）
 - ソース追従と入力異常表示
 
 ## 次にやること
 
-1. **F007 本文の欠落なしとセクション構成** — 依存 F006 完了。見出し 2 ごとにセクションを分け、ソースの情報を欠かさず出す。
-2. 並行候補: **F009 外部リンク**（F006 依存）。ID 最小は F007。
+1. **F008 箇条書きの密度レイアウト** — 依存 F007 完了。資格は表、スキルはグループ、課金はタグ。
+2. 並行候補: **F009 外部リンク**（F006 依存）。ID 最小は F008。
 
 ## 直近のセッションでやったこと
+
+### 2026-08-27（F007）
+
+- 開始時に `.cursor/sync-latest-main.sh` で `origin/main`（F006 マージ済み `26a3e88`）を確認してから着手
+- `wrapHeading2Sections` が hast の `h2` から次の `h2` 直前までを `<section>` にする。日本語見出し名では分岐しない
+- 検証: `pnpm check` exit 0。`curl` で指定文言がすべてヒット。4 つの `section>h2`（趣味 / 現在の業務内容 / スキル / 資格）。見出しは header の h1 → section の h2 → h3。ブラウザでも欠落なしを確認。verifier PASS のため F007 の `passes` を true にした
 
 ### 2026-08-27（F006）
 
