@@ -75,7 +75,7 @@
       "dependencies": "F007",
       "behavior": "資格の各項目が表の行（または同等の密な行）として 1:1 で出る。スキルの親（Python 等）と子（LightGBM 等）がグループまたは 2 列で、単一 ul の縦並びだけではない。課金リスト（ChatGPT から Aqua Voice まで）がタグとして横並び・折り返しされる。リスト文言は省略しない。",
       "verification": "curl -sS http://localhost:3210/ で ChatGPT, Claude, Gemini, Cursor, FireCrawl, Greptile, Aqua Voice がすべて存在すること。資格セクションに <table> がある（または role で表相当）。スキルが入れ子 ul の 1 列だけでないこと（タグ、表、グリッドのいずれかのマークアップ）。ページ全体が単一の <ul> だけの本文になっていないこと。",
-      "passes": false
+      "passes": true
     },
     {
       "id": "F009",

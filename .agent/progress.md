@@ -8,28 +8,38 @@
 ## いま動いているもの
 
 - 仕様: `docs/srs.md`
-- 完了判定: `.agent/feature_list.json`（F001–F007 `passes: true`。F008–F013 は false）
+- 完了判定: `.agent/feature_list.json`（F001–F008 `passes: true`。F009–F013 は false）
 - `pnpm check`（`biome check .` と `tsc --noEmit`）
 - `pnpm build`（型検査付き Vite 本番ビルド）
 - `pnpm dev`（Vite。ポート 3210・`strictPort: true`・`host: "localhost"`。IPv4/IPv6 ループバック）
 - GET `/` が `contents/self-introduction.md` を unified（`remark-parse` → `remark-frontmatter` → `remark-rehype` → `rehype-stringify`）で HTML にして返す。生 HTML は通さない。ブラウザで md を fetch しない
 - ページ先頭ヘッダ: frontmatter の `name` を 1 つの `h1` に出し、存在する URL を GitHub / Blog / X のテキストラベルでリンクする。本文の `{name}` は展開する。Markdown の見出し 1 はヘッダに統合
 - 見出し 2 から次の見出し 2 直前までを `<section>` で包む。趣味 / 現在の業務内容 / スキル / 資格の文言はソースどおり。見出し名では分岐しない
+- 箇条書きは 1 列の長い黒丸にしない。資格は `<table>`、スキルは `.skill-groups` グリッド＋子タグ、「課金しています」直後は `.tags` 横並び。その他の入れ子は親＋子タグ。リスト文言は省略しない
+- GET `/list-layout.css` はプラグインが `text/css` で生 CSS を返す（`src` 直リンクだと Vite が JS モジュールにする）
 - GitHub Actions `.github/workflows/ci.yml`（`pull_request` と `main` への `push` で `pnpm check`）
 - Cloud Agent `start`: `.cursor/sync-latest-main.sh` が `origin/main` を fetch し、クリーンな default branch なら fast-forward する
 
 ## いま動いていないもの
 
-- 箇条書きの密度レイアウト（F008）と編集的デザイン・印刷 CSS（F010 / F011）
+- 編集的デザインと印刷 CSS（F010 / F011）
 - 外部リンクの `target` / `rel`（F009）
 - ソース追従と入力異常表示
 
 ## 次にやること
 
-1. **F008 箇条書きの密度レイアウト** — 依存 F007 完了。資格は表、スキルはグループ、課金はタグ。
-2. 並行候補: **F009 外部リンク**（F006 依存）。ID 最小は F008。
+1. **F009 外部リンクの開き方** — 依存 F006 完了。http(s) は `target="_blank"` と `rel="noopener noreferrer"`。
+2. そのあと **F010 編集的な 1 枚デザイン**（F008 依存）。
 
 ## 直近のセッションでやったこと
+
+### 2026-08-27（F008）
+
+- 開始時に `.cursor/sync-latest-main.sh` で `origin/main`（F007 マージ済み `0f6e219`）を確認してから着手
+- `densifyLists` が hast のリストを変換する。資格→表、スキル→グループ＋タグ、課金段落直後→折り返しタグ、その他の入れ子→親＋子タグ
+- 入れ子を全幅 table にすると子タグが右端へ離れるため、グループ＋タグにした
+- `/list-layout.css` をプラグインが `text/css` で返す。`/src/styles/...` 直リンクは Vite が JS にする
+- 検証: `pnpm check` exit 0。`curl` で課金 7 件、資格 `<table>` 4 行、スキル `.skill-groups`。ページは単一 ul ではない。ブラウザでタグ横並びと 2 列スキルを確認。verifier は CSS 配信修正後に PASS。F008 の `passes` を true にした
 
 ### 2026-08-27（F007）
 
