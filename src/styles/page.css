@@ -9,8 +9,10 @@
   --font-latin: "Iowan Old Style", "Palatino Linotype", Palatino, serif;
   --font-ui: "Hiragino Sans", "Hiragino Kaku Gothic ProN", sans-serif;
   --font-size-base: 16px;
-  --line-height-body: 1.62;
+  --line-height-body: 1.68;
   --page-max-width: 186mm;
+  --section-gap: 1.65rem;
+  --section-pad: 1.35rem 1.45rem 1.5rem;
 }
 
 *,
@@ -31,7 +33,7 @@ body {
   line-height: var(--line-height-body);
   margin: 0 auto;
   max-width: var(--page-max-width);
-  padding: 1.75rem 1.25rem 2.5rem;
+  padding: 2rem 1.35rem 3rem;
 }
 
 header {
@@ -41,11 +43,11 @@ header {
   flex-wrap: wrap;
   gap: 0.45rem 1.25rem;
   justify-content: space-between;
-  padding-bottom: 0.7rem;
+  padding-bottom: 0.85rem;
 }
 
 h1 {
-  font-size: 1.28em;
+  font-size: 1.32em;
   font-weight: 700;
   letter-spacing: 0.06em;
   margin: 0;
@@ -59,22 +61,43 @@ header nav {
   gap: 0.55rem 0.9rem;
 }
 
+main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--section-gap);
+  margin-top: 1.75rem;
+}
+
+section {
+  background: transparent;
+  border: 1px solid var(--color-rule);
+  break-inside: avoid;
+  padding: var(--section-pad);
+}
+
 h2 {
-  font-size: 1.18em;
+  border-bottom: 1px solid var(--color-rule);
+  color: var(--color-accent);
+  font-size: 1.22em;
   font-weight: 700;
   letter-spacing: 0.14em;
-  margin: 1.55rem 0 0.7rem;
+  margin: 0 0 1.05rem;
+  padding-bottom: 0.45rem;
 }
 
 h3 {
   font-size: 1.15em;
   font-weight: 700;
-  margin: 0 0 0.4rem;
+  margin: 0 0 0.45rem;
 }
 
 p {
   color: var(--color-text);
-  margin: 0 0 0.65rem;
+  margin: 0 0 0.75rem;
+}
+
+p:last-child {
+  margin-bottom: 0;
 }
 
 a {
@@ -88,16 +111,18 @@ a:hover {
 
 .h3-grid {
   display: grid;
-  gap: 1.15rem 1.75rem;
+  gap: 1.25rem 1.85rem;
   grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr));
+  margin-bottom: 1.15rem;
+}
+
+.h3-block {
+  border-left: 2px solid var(--color-rule);
+  padding-left: 0.9rem;
 }
 
 .h3-block > :last-child {
   margin-bottom: 0;
-}
-
-section {
-  background: transparent;
 }
 
 table {
@@ -108,5 +133,32 @@ th,
 td {
   border-bottom: 1px solid var(--color-rule);
   color: var(--color-text);
-  padding: 0.28rem 0.5rem 0.28rem 0;
+  padding: 0.4rem 0.6rem 0.4rem 0;
+}
+
+@page {
+  margin: 12mm;
+  size: A4 portrait;
+}
+
+@media print {
+  html,
+  body {
+    background: var(--color-bg);
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  body {
+    font-size: 11pt;
+    max-width: none;
+    padding: 0;
+  }
+
+  header,
+  section,
+  .h3-block,
+  table {
+    break-inside: avoid;
+  }
 }
