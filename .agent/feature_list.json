@@ -48,7 +48,7 @@
       "dependencies": "F004",
       "behavior": "ソースは unified と remark-parse を import してパイプライン処理する。frontmatter・見出し・段落・リストを AST として扱う。ページ本文を TypeScript にハードコードしない。Markdown 中の生 HTML は出力に通さない。",
       "verification": "src 配下（または同等）に unified と remark-parse の import があること。grep -R \"from \\\"unified\\\"\" および remark-parse がヒットし、md 全体を正規表現置換して HTML にする実装が無いこと。contents/self-introduction.md の見出し文言が TS に複製されていないこと。ソース Markdown に <script> 相当を一時追加しても出力 HTML で実行タグにならないこと（確認後は元に戻す）。",
-      "passes": false
+      "passes": true
     },
     {
       "id": "F006",
