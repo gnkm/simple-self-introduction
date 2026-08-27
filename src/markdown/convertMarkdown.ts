@@ -1,6 +1,7 @@
 import rehypeStringify from "rehype-stringify";
 import remarkRehype from "remark-rehype";
 import { unified } from "unified";
+import { densifyLists } from "./densifyLists.ts";
 import { expandNamePlaceholder } from "./expandName.ts";
 import { extractFrontmatter, type Frontmatter } from "./frontmatter.ts";
 import { parseMarkdown } from "./parseMarkdown.ts";
@@ -26,6 +27,7 @@ export function convertMarkdownToPage(source: string): ConvertedPage {
     .use(remarkRehype, { allowDangerousHtml: false })
     .runSync(markdownAst);
   wrapHeading2Sections(htmlAst);
+  densifyLists(htmlAst);
 
   return {
     frontmatter,
