@@ -1,9 +1,11 @@
 import rehypeStringify from "rehype-stringify";
 import remarkRehype from "remark-rehype";
 import { unified } from "unified";
+import { autolinkHttpUrls } from "./autolinkHttpUrls.ts";
 import { densifyLists } from "./densifyLists.ts";
 import { expandNamePlaceholder } from "./expandName.ts";
 import { extractFrontmatter, type Frontmatter } from "./frontmatter.ts";
+import { markExternalLinks } from "./markExternalLinks.ts";
 import { parseMarkdown } from "./parseMarkdown.ts";
 import { removeYamlAndTitleHeadings } from "./prepareBodyAst.ts";
 import { wrapHeading2Sections } from "./wrapHeading2Sections.ts";
@@ -22,12 +24,14 @@ export function convertMarkdownToPage(source: string): ConvertedPage {
   const frontmatter = extractFrontmatter(markdownAst);
   expandNamePlaceholder(markdownAst, frontmatter.name);
   removeYamlAndTitleHeadings(markdownAst);
+  autolinkHttpUrls(markdownAst);
 
   const htmlAst = unified()
     .use(remarkRehype, { allowDangerousHtml: false })
     .runSync(markdownAst);
   wrapHeading2Sections(htmlAst);
   densifyLists(htmlAst);
+  markExternalLinks(htmlAst);
 
   return {
     frontmatter,
