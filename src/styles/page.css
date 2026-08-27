@@ -1,0 +1,112 @@
+:root {
+  --color-bg: #f6f4ef;
+  --color-text: #1c1b19;
+  --color-muted: #5c5852;
+  --color-rule: #d4d0c8;
+  --color-accent: #2c4a6e;
+  --color-tag-bg: #ece8e0;
+  --font-body: "Hiragino Mincho ProN", "Yu Mincho", "YuMincho", serif;
+  --font-latin: "Iowan Old Style", "Palatino Linotype", Palatino, serif;
+  --font-ui: "Hiragino Sans", "Hiragino Kaku Gothic ProN", sans-serif;
+  --font-size-base: 16px;
+  --line-height-body: 1.62;
+  --page-max-width: 186mm;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--color-bg);
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-body);
+  margin: 0 auto;
+  max-width: var(--page-max-width);
+  padding: 1.75rem 1.25rem 2.5rem;
+}
+
+header {
+  align-items: baseline;
+  border-bottom: 1px solid var(--color-rule);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem 1.25rem;
+  justify-content: space-between;
+  padding-bottom: 0.7rem;
+}
+
+h1 {
+  font-size: 1.28em;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  margin: 0;
+}
+
+header nav {
+  display: flex;
+  flex-wrap: wrap;
+  font-family: var(--font-ui);
+  font-size: 0.875rem;
+  gap: 0.55rem 0.9rem;
+}
+
+h2 {
+  font-size: 1.18em;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  margin: 1.55rem 0 0.7rem;
+}
+
+h3 {
+  font-size: 1.15em;
+  font-weight: 700;
+  margin: 0 0 0.4rem;
+}
+
+p {
+  color: var(--color-text);
+  margin: 0 0 0.65rem;
+}
+
+a {
+  color: var(--color-accent);
+  text-underline-offset: 0.16em;
+}
+
+a:hover {
+  color: var(--color-text);
+}
+
+.h3-grid {
+  display: grid;
+  gap: 1.15rem 1.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr));
+}
+
+.h3-block > :last-child {
+  margin-bottom: 0;
+}
+
+section {
+  background: transparent;
+}
+
+table {
+  width: 100%;
+}
+
+th,
+td {
+  border-bottom: 1px solid var(--color-rule);
+  color: var(--color-text);
+  padding: 0.28rem 0.5rem 0.28rem 0;
+}
