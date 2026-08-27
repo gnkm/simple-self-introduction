@@ -24,14 +24,34 @@ function isText(node: MdastChild): node is MdastChild & { value: string } {
 
 const HTTP_URL_PATTERN = /https?:\/\/[^\s<>"'`]+/g;
 const HAS_HTTP_URL = /https?:\/\/[^\s<>"'`]+/;
-const TRAILING_PUNCTUATION = /[.,;:!?)]+$/;
+const TRAILING_SENTENCE_PUNCT = /[.,;:!?]+$/;
+
+function unmatchedClosingParens(value: string): number {
+  let open = 0;
+  let extraClose = 0;
+  for (const char of value) {
+    if (char === "(") {
+      open += 1;
+    } else if (char === ")") {
+      if (open > 0) {
+        open -= 1;
+      } else {
+        extraClose += 1;
+      }
+    }
+  }
+  return extraClose;
+}
 
 function normalizeMatchedUrl(raw: string): { url: string; rest: string } {
-  const withoutTrail = raw.replace(TRAILING_PUNCTUATION, "");
-  if (withoutTrail === "") {
+  let url = raw.replace(TRAILING_SENTENCE_PUNCT, "");
+  while (url.endsWith(")") && unmatchedClosingParens(url) > 0) {
+    url = url.slice(0, -1);
+  }
+  if (url === "") {
     return { url: raw, rest: "" };
   }
-  return { url: withoutTrail, rest: raw.slice(withoutTrail.length) };
+  return { url, rest: raw.slice(url.length) };
 }
 
 function splitTextWithUrls(value: string): MdastChild[] {
