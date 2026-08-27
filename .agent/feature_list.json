@@ -57,7 +57,7 @@
       "dependencies": "F005",
       "behavior": "ページに氏名 gnkm が 1 つの h1 として現れ、視覚的に巨大タイトルが二重にならない。GitHub / Blog / X のテキストラベルリンクがそれぞれ https://github.com/gnkm , https://tech.gnkm.info/ , https://x.com/gnkmxjp を指す。{name} は展開され、生の {name} が残らない。",
       "verification": "curl -sS http://localhost:3210/ の HTML で: (1) grep -c '<h1' が 1。(2) h1 内が gnkm。(3) grep -F '{name}' がヒットしない。(4) 3 URL が href に存在し、リンクテキストがアイコンではなく GitHub / Blog / X のいずれかであること。",
-      "passes": false
+      "passes": true
     },
     {
       "id": "F007",
