@@ -3,31 +3,37 @@
 セッション間の引き継ぎ。**次のセッションは記憶ゼロで始まる。**
 停止する前に必ず更新すること。
 
-最終更新: 2026-08-26
+最終更新: 2026-08-27
 
 ## いま動いているもの
 
 - 仕様: `docs/srs.md`
-- 完了判定: `.agent/feature_list.json`（F001–F004 `passes: true`。F005–F013 は false）
+- 完了判定: `.agent/feature_list.json`（F001–F005 `passes: true`。F006–F013 は false）
 - `pnpm check`（`biome check .` と `tsc --noEmit`）
 - `pnpm build`（型検査付き Vite 本番ビルド）
 - `pnpm dev`（Vite。ポート 3210・`strictPort: true`・`host: "localhost"`。IPv4/IPv6 ループバック）
-- GET `/` が `contents/self-introduction.md` を HTML エスケープして `<pre>` に埋め込んだ完成 HTML を返す（ブラウザで md を fetch しない）
+- GET `/` が `contents/self-introduction.md` を unified（`remark-parse` → `remark-frontmatter` → `remark-rehype` → `rehype-stringify`）で HTML にして返す。生 HTML は通さない。ブラウザで md を fetch しない
 - GitHub Actions `.github/workflows/ci.yml`（`pull_request` と `main` への `push` で `pnpm check`）
 - Cloud Agent `start`: `.cursor/sync-latest-main.sh` が `origin/main` を fetch し、クリーンな default branch なら fast-forward する
 
 ## いま動いていないもの
 
-- unified による Markdown 変換（F005）
 - ヘッダ・氏名・`{name}` 展開（F006）
 - セクション構成・箇条書きレイアウト・印刷 CSS
 
 ## 次にやること
 
-1. **F005 unified による Markdown 変換** — 依存 F004 完了。`unified` + `remark-parse` を中核にし、正規表現だけで HTML にしない。
-2. そのあと **F006 ヘッダ・氏名・プレースホルダ**。
+1. **F006 ヘッダ・氏名・プレースホルダ** — 依存 F005 完了。frontmatter の `name` と URL、見出しの `{name}` 置換をページ先頭に出す。
+2. そのあと **F007 本文の欠落なしとセクション構成**（F006 依存）および **F009 外部リンク**（F006 依存）。
 
 ## 直近のセッションでやったこと
+
+### 2026-08-27（F005）
+
+- 開始時に `.cursor/sync-latest-main.sh` で `origin/main`（F004 マージ済み `e1fa6de`）を確認してから着手
+- `unified` + `remark-parse` + `remark-frontmatter` で mdast にし、`remark-rehype`（`allowDangerousHtml: false`）+ `rehype-stringify` で HTML にする
+- GET `/` はエスケープ済み `<pre>` ではなく見出し・段落・リストの HTML を返す。frontmatter は AST の `yaml` ノードになり本文に出ない
+- 検証: `pnpm check` exit 0。`from "unified"` と `remark-parse` の import あり。見出し文言の TS 複製なし。`curl` が 200 / `text/html; charset=utf-8` で `サイクリング` と `応用情報技術者` を含む。`<script>` 一時追加は実行タグにならない（確認後ソースを復元）。verifier PASS のため F005 の `passes` を true にした
 
 ### 2026-08-26（F004）
 
@@ -78,3 +84,5 @@
 - Cloud Agent は Environment Build の recorded commit を再利用する。公式の always-pull は Builds タブの Staleness threshold `0`。リポジトリ側でも `start` で fetch する
 - プレビルドの作業ツリーが古いと F003 完了済みでも `feature_list.json` が F001 止まりに見える。対象選定前に `origin/main` を取り込む
 - Vite 8 は `vite.config.ts` から拡張子なしで `src/*.ts` を import すると native configLoader 警告が出る。`.ts` を付ける
+- プレビルドの `pnpm dev`（PID 2580）が 3210 を占有していた。F005 確認前にその PID を止めてブランチのサーバを起動した
+- `import type { Root } from "mdast"` は直接依存が無く `tsc` が落ちる。戻り値型は推論に任せた
