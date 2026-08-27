@@ -1,6 +1,8 @@
 import type { Frontmatter } from "../markdown/frontmatter.ts";
 import { escapeHtml } from "./escapeHtml.ts";
 
+export const LIST_LAYOUT_STYLESHEET_HREF = "/list-layout.css";
+
 const HEADER_LINKS = [
   { key: "github", label: "GitHub" },
   { key: "blog", label: "Blog" },
@@ -32,7 +34,7 @@ export function renderPageHtml(
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>${name}</title>
-    <link rel="stylesheet" href="/src/styles/list-layout.css" />
+    <link rel="stylesheet" href="${LIST_LAYOUT_STYLESHEET_HREF}" />
   </head>
   <body>
     <header>
