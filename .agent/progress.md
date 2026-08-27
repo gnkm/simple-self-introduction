@@ -8,7 +8,7 @@
 ## いま動いているもの
 
 - 仕様: `docs/srs.md`
-- 完了判定: `.agent/feature_list.json`（F001–F009 `passes: true`。F010–F013 は false）
+- 完了判定: `.agent/feature_list.json`（F001–F010 `passes: true`。F011–F013 は false）
 - `pnpm check`（`biome check .` と `tsc --noEmit`）
 - `pnpm build`（型検査付き Vite 本番ビルド）
 - `pnpm dev`（Vite。ポート 3210・`strictPort: true`・`host: "localhost"`。IPv4/IPv6 ループバック）
@@ -17,21 +17,30 @@
 - 見出し 2 から次の見出し 2 直前までを `<section>` で包む。趣味 / 現在の業務内容 / スキル / 資格の文言はソースどおり。見出し名では分岐しない
 - 箇条書きは 1 列の長い黒丸にしない。資格は `<table>`、スキルは `.skill-groups` グリッド＋子タグ、「課金しています」直後は `.tags` 横並び。その他の入れ子は親＋子タグ。リスト文言は省略しない
 - ページ内の http(s) リンクは `target="_blank"` と `rel="noopener noreferrer"`。単独行 URL は自動リンク。空の href の a は残さない
-- GET `/list-layout.css` はプラグインが `text/css` で生 CSS を返す（`src` 直リンクだと Vite が JS モジュールにする）
+- GET `/page.css` と `/list-layout.css` はプラグインが `text/css` で生 CSS を返す（`src` 直リンクだと Vite が JS モジュールにする）
+- 画面デザイン: 紙色背景 `#f6f4ef`、本文 `#1c1b19`、アクセント `#2c4a6e` をカスタムプロパティ経由。ヘッダは左氏名・右リンク・下罫線。趣味 h3 は 1〜2 列。フッター無し
 - GitHub Actions `.github/workflows/ci.yml`（`pull_request` と `main` への `push` で `pnpm check`）
 - Cloud Agent `start`: `.cursor/sync-latest-main.sh` が `origin/main` を fetch し、クリーンな default branch なら fast-forward する
 
 ## いま動いていないもの
 
-- 編集的デザインと印刷 CSS（F010 / F011）
+- 印刷時 A4 縦 1 ページ（F011）
 - ソース追従と入力異常表示
 
 ## 次にやること
 
-1. **F010 編集的な 1 枚デザイン** — 依存 F008 完了。トークン・ヘッダ配置・禁止装飾・フッター無し。
-2. そのあと **F011 印刷時 A4 縦 1 ページ**（F010 依存）。並行候補: F012 / F013。
+1. **F011 印刷時 A4 縦 1 ページ** — 依存 F010 完了。`@page` A4 縦・余白 10–14mm・`break-inside: avoid`・印刷プレビュー 1 枚。
+2. 並行候補: F012（ソース追従）/ F013（入力異常）。
 
 ## 直近のセッションでやったこと
+
+### 2026-08-27（F010）
+
+- 開始時に `.cursor/sync-latest-main.sh` で `origin/main`（F009 マージ済み `7c9a755`）を確認してから着手
+- `src/styles/page.css` に 6.3 トークンとヘッダ（左氏名・右リンク・下罫線）、A4 相当幅の中央寄せ。`/page.css` はプラグインが `text/css` で返す
+- `wrapHeading3Blocks` が見出し 3 ブロックを `.h3-grid` にし、自動で 1〜2 列。見出し名では分岐しない
+- フッター要素・progress・巨大ヒーロー・ガラスモーフィズムは置かない。末尾は資格セクション
+- 検証: `pnpm check` exit 0。配信 CSS に `--color-bg: #f6f4ef` / `--color-text: #1c1b19` / `--color-accent: #2c4a6e`。HTML に progress / footer / icon クラスなし。ブラウザでヒーロー無し・趣味 2 列・紙色背景を確認。verifier PASS のため F010 の `passes` を true にした
 
 ### 2026-08-27（F009）
 
@@ -118,3 +127,4 @@
 - Vite 8 は `vite.config.ts` から拡張子なしで `src/*.ts` を import すると native configLoader 警告が出る。`.ts` を付ける
 - プレビルドの `pnpm dev`（PID 2580）が 3210 を占有していた。F005 確認前にその PID を止めてブランチのサーバを起動した
 - `import type { Root } from "mdast"` は直接依存が無く `tsc` が落ちる。戻り値型は推論に任せた
+- `page.css` を `list-layout.css` より先に読むと、A4 未満 1 列の media がスキル 2 列指定に負ける。畳みは `list-layout.css` 側に置く
