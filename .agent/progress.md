@@ -8,25 +8,34 @@
 ## いま動いているもの
 
 - 仕様: `docs/srs.md`
-- 完了判定: `.agent/feature_list.json`（F001–F005 `passes: true`。F006–F013 は false）
+- 完了判定: `.agent/feature_list.json`（F001–F006 `passes: true`。F007–F013 は false）
 - `pnpm check`（`biome check .` と `tsc --noEmit`）
 - `pnpm build`（型検査付き Vite 本番ビルド）
 - `pnpm dev`（Vite。ポート 3210・`strictPort: true`・`host: "localhost"`。IPv4/IPv6 ループバック）
 - GET `/` が `contents/self-introduction.md` を unified（`remark-parse` → `remark-frontmatter` → `remark-rehype` → `rehype-stringify`）で HTML にして返す。生 HTML は通さない。ブラウザで md を fetch しない
+- ページ先頭ヘッダ: frontmatter の `name` を 1 つの `h1` に出し、存在する URL を GitHub / Blog / X のテキストラベルでリンクする。本文の `{name}` は展開する。Markdown の見出し 1 はヘッダに統合
 - GitHub Actions `.github/workflows/ci.yml`（`pull_request` と `main` への `push` で `pnpm check`）
 - Cloud Agent `start`: `.cursor/sync-latest-main.sh` が `origin/main` を fetch し、クリーンな default branch なら fast-forward する
 
 ## いま動いていないもの
 
-- ヘッダ・氏名・`{name}` 展開（F006）
 - セクション構成・箇条書きレイアウト・印刷 CSS
+- 外部リンクの `target` / `rel`（F009）
+- ソース追従と入力異常表示
 
 ## 次にやること
 
-1. **F006 ヘッダ・氏名・プレースホルダ** — 依存 F005 完了。frontmatter の `name` と URL、見出しの `{name}` 置換をページ先頭に出す。
-2. そのあと **F007 本文の欠落なしとセクション構成**（F006 依存）および **F009 外部リンク**（F006 依存）。
+1. **F007 本文の欠落なしとセクション構成** — 依存 F006 完了。見出し 2 ごとにセクションを分け、ソースの情報を欠かさず出す。
+2. 並行候補: **F009 外部リンク**（F006 依存）。ID 最小は F007。
 
 ## 直近のセッションでやったこと
+
+### 2026-08-27（F006）
+
+- 開始時に `.cursor/sync-latest-main.sh` で `origin/main`（F005 マージ済み `baed551`）を確認してから着手
+- `yaml` で frontmatter を解析し、`{name}` を AST 上で置換。見出し 1 と yaml ノードは本文から除き、氏名はヘッダの `h1` に統合
+- 存在する `github` / `blog` / `x` だけを GitHub / Blog / X のテキストラベルリンクにする
+- 検証: `pnpm check` exit 0。`curl` で `h1` が 1 つ・中身 `gnkm`・生 `{name}` なし・3 URL とテキストラベル。ブラウザで二重タイトル無しとリンク先を確認。verifier PASS のため F006 の `passes` を true にした
 
 ### 2026-08-27（F005）
 
