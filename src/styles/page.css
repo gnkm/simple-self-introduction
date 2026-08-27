@@ -110,10 +110,3 @@ td {
   color: var(--color-text);
   padding: 0.28rem 0.5rem 0.28rem 0;
 }
-
-@media (max-width: 210mm) {
-  .skill-groups,
-  .list-grid {
-    grid-template-columns: 1fr;
-  }
-}

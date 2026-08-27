@@ -58,3 +58,10 @@ td {
   text-align: left;
   vertical-align: top;
 }
+
+@media (max-width: 210mm) {
+  .skill-groups,
+  .list-grid {
+    grid-template-columns: 1fr;
+  }
+}
