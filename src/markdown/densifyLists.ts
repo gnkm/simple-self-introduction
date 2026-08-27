@@ -151,13 +151,16 @@ function listToSkillGroups(list: HastElement): HastElement {
   return el("div", groups, ["skill-groups"]);
 }
 
-function listToNestedTable(list: HastElement): HastElement {
-  const rows = listItems(list).map((item) => {
+function listToNestedGroups(list: HastElement): HastElement {
+  const groups = listItems(list).map((item) => {
     const { label, nested } = itemParts(item);
-    const right = nested === undefined ? [] : [listToTags(nested)];
-    return el("tr", [el("th", label), el("td", right)]);
+    const children: HastChild[] = [el("div", label, ["list-parent"])];
+    if (nested !== undefined) {
+      children.push(listToTags(nested));
+    }
+    return el("div", children, ["list-group"]);
   });
-  return el("table", [el("tbody", rows)], ["nested-list"]);
+  return el("div", groups, ["list-groups"]);
 }
 
 function listToFlatGrid(list: HastElement): HastElement {
@@ -194,7 +197,7 @@ function densifyList(
     return listToTags(list);
   }
   if (hasNestedList(list)) {
-    return listToNestedTable(list);
+    return listToNestedGroups(list);
   }
   return listToFlatGrid(list);
 }

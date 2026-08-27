@@ -20,8 +20,21 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-.skill-parent {
+.skill-parent,
+.list-parent {
   font-weight: 700;
+}
+
+.list-groups {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.list-group {
+  align-items: baseline;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.75rem;
 }
 
 .list-grid {
@@ -35,7 +48,6 @@
 
 table {
   border-collapse: collapse;
-  width: 100%;
 }
 
 th,
@@ -44,8 +56,3 @@ td {
   vertical-align: top;
 }
 
-.nested-list th {
-  font-weight: 700;
-  padding-right: 1rem;
-  white-space: nowrap;
-}
