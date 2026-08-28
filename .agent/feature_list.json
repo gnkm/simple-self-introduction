@@ -102,7 +102,7 @@
       "dependencies": "F010",
       "behavior": "CSS に @page { size: A4 portrait; } と 10mm〜14mm の余白がある。印刷時フォントは 9pt 未満にしない。セクションに break-inside: avoid がある。Chrome 印刷プレビュー（ヘッダーとフッター off、A4 縦）で本文が切れない。ページ数が 1 であることは求めない。",
       "verification": "配信 CSS に size: A4 と portrait、余白 10mm〜14mm、break-inside: avoid、印刷時 font-size が 9pt 以上であることを確認する。Google Chrome で http://localhost:3210/ を開き、印刷プレビュー: 用紙 A4・縦・ヘッダーとフッター off。本文（資格の最終行まで）が切れていないこと。ページ数が 2 以上でも合格。",
-      "passes": false
+      "passes": true
     },
     {
       "id": "F012",
