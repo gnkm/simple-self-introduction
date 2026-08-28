@@ -8,7 +8,7 @@
 ## いま動いているもの
 
 - 仕様: `docs/srs.md`（A4 1 枚制約は撤廃。印刷は A4 縦、2 枚以上可。セクション区切り必須。frontmatter の github / blog / x は氏名直下のリンクで、テキストと href が同じ URL）
-- 完了判定: `.agent/feature_list.json`（F001–F012 `passes: true`。F013 は false。F006 / F010 のヘッダ記述は旧仕様のまま。正は seed / SRS）
+- 完了判定: `.agent/feature_list.json`（F001–F013 `passes: true`。F006 / F010 のヘッダ記述は旧仕様のまま。正は seed / SRS）
 - `pnpm check`（`biome check .` と `tsc --noEmit`）
 - `pnpm build`（型検査付き Vite 本番ビルド）
 - `pnpm dev`（Vite。ポート 3210・`strictPort: true`・`host: "localhost"`。IPv4/IPv6 ループバック）
@@ -22,16 +22,24 @@
 - 印刷: `@page { size: A4 portrait; margin: 12mm; }`、印刷時 11pt、`break-inside: avoid`。現行分量は 2 ページ
 - GitHub Actions `.github/workflows/ci.yml`（`pull_request` と `main` への `push` で `pnpm check`）
 - Cloud Agent `start`: `.cursor/sync-latest-main.sh` が `origin/main` を fetch し、クリーンな default branch なら fast-forward する
+- 入力異常: ソース欠落・壊れた YAML・`name` 欠落は GET `/` が HTTP 500 と `入力エラー` ページ（パスと原因）。Untitled にしない。コンソールに `入力異常: <path>`
 
 ## いま動いていないもの
 
-- 入力異常の表示（F013）
+- feature_list の未完了項目は無い
 
 ## 次にやること
 
-1. **F013 入力異常の表示** — 依存 F003 完了。ソース退避と name 欠落コピーは確認後に必ず戻す。
+1. feature_list（F001–F013）は完了。残りは seed / SRS と F006 / F010 記述の差（ヘッダ URL はラベルではなく URL テキスト）など、仕様側の追随があればユーザー指示で。
 
 ## 直近のセッションでやったこと
+
+### 2026-08-28（F013・入力異常の表示）
+
+- 開始時に `.cursor/sync-latest-main.sh` で `origin/main`（`8b3bc1fd`）を確認してから着手。ブランチ `feat/input-error-display`
+- 欠落は `readSourceMarkdown` がパス付き Error。壊れた YAML と `name` 欠落は `extractFrontmatter` が投げる。プラグインが 500 と `renderErrorPage`（title は `入力エラー`）
+- 検証: `pnpm check` exit 0。ファイル退避 → curl 500・`ソース Markdown がありません`。復元 → 200。`name:` 削除 → 500・`frontmatter の name がありません`。確認後ソース復元。壊れた YAML も 500。verifier PASS のため F013 の `passes` を true にした
+- 既存の 3210 プロセスを止めてブランチの `pnpm dev` を起動した
 
 ### 2026-08-28（F012・ソース Markdown の追従）
 
@@ -162,3 +170,4 @@
 - `import type { Root } from "mdast"` は直接依存が無く `tsc` が落ちる。戻り値型は推論に任せた
 - `page.css` を `list-layout.css` より先に読むと、A4 未満 1 列の media がスキル 2 列指定に負ける。畳みは `list-layout.css` 側に置く
 - GUI 用 `/usr/local/bin/google-chrome` は `--remote-debugging-port=9222` と共有プロファイル付き。長いシェルから起動すると `Command failed to spawn: Aborted`。ヘッドレス PDF は `/usr/bin/google-chrome-stable --headless=new` と別 `--user-data-dir` を使う
+- F013 検証で Chrome ヘッドレスが GoogleUpdater でハングした。スクリーンショット後もプロセスが残る。ソース退避中なら先に Markdown を戻してから Chrome を殺す

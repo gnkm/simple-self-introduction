@@ -33,7 +33,13 @@ export function extractFrontmatter(tree: {
     throw new Error("frontmatter YAML がありません");
   }
 
-  const parsed: unknown = parseYaml(yamlNode.value);
+  let parsed: unknown;
+  try {
+    parsed = parseYaml(yamlNode.value);
+  } catch (error) {
+    const detail = error instanceof Error ? error.message : String(error);
+    throw new Error(`frontmatter の YAML が壊れています: ${detail}`);
+  }
   if (!isRecord(parsed)) {
     throw new Error("frontmatter がオブジェクトではありません");
   }

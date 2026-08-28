@@ -6,6 +6,7 @@ import {
   readSourceMarkdown,
   resolveSourceMarkdownPath,
 } from "./markdown/readSource.ts";
+import { formatErrorMessage, renderErrorPage } from "./render/errorPage.ts";
 import {
   LIST_LAYOUT_STYLESHEET_HREF,
   PAGE_STYLESHEET_HREF,
@@ -96,17 +97,35 @@ export function selfIntroPlugin(): Plugin {
         }
 
         void (async () => {
-          const markdown = await readSourceMarkdown(server.config.root);
-          const { frontmatter, bodyHtml } = convertMarkdownToPage(markdown);
-          const html = injectViteClient(renderPageHtml(frontmatter, bodyHtml));
-          res.statusCode = 200;
-          res.setHeader("Content-Type", "text/html; charset=utf-8");
-          if (req.method === "HEAD") {
-            res.end();
-            return;
+          const sourcePath = resolveSourceMarkdownPath(server.config.root);
+          try {
+            const markdown = await readSourceMarkdown(server.config.root);
+            const { frontmatter, bodyHtml } = convertMarkdownToPage(markdown);
+            const html = injectViteClient(
+              renderPageHtml(frontmatter, bodyHtml),
+            );
+            res.statusCode = 200;
+            res.setHeader("Content-Type", "text/html; charset=utf-8");
+            if (req.method === "HEAD") {
+              res.end();
+              return;
+            }
+            res.end(html);
+          } catch (error) {
+            console.error(`入力異常: ${sourcePath}`);
+            console.error(error);
+            const html = injectViteClient(
+              renderErrorPage(formatErrorMessage(error), sourcePath),
+            );
+            res.statusCode = 500;
+            res.setHeader("Content-Type", "text/html; charset=utf-8");
+            if (req.method === "HEAD") {
+              res.end();
+              return;
+            }
+            res.end(html);
           }
-          res.end(html);
-        })().catch(next);
+        })();
       });
     },
   };

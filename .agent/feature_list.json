@@ -120,7 +120,7 @@
       "dependencies": "F003",
       "behavior": "ファイルが無い、または YAML が壊れている、または name が無いとき、HTTP 500 相当かページ内エラーメッセージを出し、コンソールまたはレスポンスに原因が分かる。空の 200 ページで成功扱いしない。タイトルを Untitled にしない。",
       "verification": "pnpm dev 起動中に (1) contents/self-introduction.md を一時退避して GET / を curl。200 かつ中身がほぼ空、ではないこと（5xx またはエラー文言）。(2) ファイルを戻す。(3) name 行だけ欠落したコピーで同様にエラーになること（確認後は正規ファイルに戻す）。",
-      "passes": false
+      "passes": true
     }
   ]
 }
