@@ -165,11 +165,19 @@ function listToTable(list: HastElement): HastElement {
 function listToSkillGroups(list: HastElement): HastElement {
   const groups = listItems(list).map((item) => {
     const { label, nested } = itemParts(item);
-    const children: HastChild[] = [el("div", label, ["skill-parent"])];
-    if (nested !== undefined) {
-      children.push(listToTags(nested));
+    const tags: HastElement[] = [];
+    if (label.length > 0) {
+      tags.push(el("li", label, ["skill-parent"]));
     }
-    return el("div", children, ["skill-group"]);
+    if (nested !== undefined) {
+      for (const child of listItems(nested)) {
+        const phrasing = phrasingWithDescendants(child);
+        if (phrasing.length > 0) {
+          tags.push(el("li", phrasing, ["skill-child"]));
+        }
+      }
+    }
+    return el("ul", tags, ["tags", "skill-group"]);
   });
   return el("div", groups, ["skill-groups"]);
 }

@@ -18,12 +18,26 @@
 }
 
 .skill-groups {
-  display: grid;
-  gap: 1rem 1.75rem;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem 1.1rem;
+  margin: 0 0 0.85rem;
 }
 
-.skill-parent,
+.skill-groups > .skill-group {
+  margin: 0;
+}
+
+.tags > li.skill-parent {
+  background: var(--color-skill-parent-bg);
+  border-color: var(--color-skill-parent-border);
+  color: var(--color-accent);
+}
+
+.tags > li.skill-child {
+  background: var(--color-tag-bg);
+}
+
 .list-parent {
   font-weight: 700;
 }
@@ -60,7 +74,6 @@ td {
 }
 
 @media (max-width: 210mm) {
-  .skill-groups,
   .list-grid {
     grid-template-columns: 1fr;
   }
