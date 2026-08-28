@@ -111,7 +111,7 @@
       "dependencies": "F004",
       "behavior": "ソース Markdown に段落を 1 行追加して保存すると、手動リロードなし、または自動リロード後にその行が GET / の HTML に現れる。特定の日本語見出し名だけに依存した変換にはしない（資格・スキル等の例外分岐は可）。",
       "verification": "contents/self-introduction.md の末尾に唯一の文字列 FEATURE_LIST_HMR_PROBE を段落として追加して保存する。数秒待ち curl -sS http://localhost:3210/ | grep -F FEATURE_LIST_HMR_PROBE がヒットすること。確認後、追加行を必ず元に戻す。",
-      "passes": false
+      "passes": true
     },
     {
       "id": "F013",

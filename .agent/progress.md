@@ -8,11 +8,11 @@
 ## いま動いているもの
 
 - 仕様: `docs/srs.md`（A4 1 枚制約は撤廃。印刷は A4 縦、2 枚以上可。セクション区切り必須。frontmatter の github / blog / x は氏名直下のリンクで、テキストと href が同じ URL）
-- 完了判定: `.agent/feature_list.json`（F001–F011 `passes: true`。F012–F013 は false。F006 / F010 のヘッダ記述は旧仕様のまま。正は seed / SRS）
+- 完了判定: `.agent/feature_list.json`（F001–F012 `passes: true`。F013 は false。F006 / F010 のヘッダ記述は旧仕様のまま。正は seed / SRS）
 - `pnpm check`（`biome check .` と `tsc --noEmit`）
 - `pnpm build`（型検査付き Vite 本番ビルド）
 - `pnpm dev`（Vite。ポート 3210・`strictPort: true`・`host: "localhost"`。IPv4/IPv6 ループバック）
-- GET `/` が `contents/self-introduction.md` を unified（`remark-parse` → `remark-frontmatter` → `remark-rehype` → `rehype-stringify`）で HTML にして返す。生 HTML は通さない。ブラウザで md を fetch しない
+- GET `/` が `contents/self-introduction.md` を unified（`remark-parse` → `remark-frontmatter` → `remark-rehype` → `rehype-stringify`）で HTML にして返す。生 HTML は通さない。ブラウザで md を fetch しない。開発中は `/@vite/client` を注入し、ソース Markdown の保存で Vite `full-reload`
 - ページ先頭ヘッダ: frontmatter の `name` を 1 つの `h1` に出し、存在する github / blog / x を氏名直下のリンクとして出す（内側と href は同じ URL）。本文の `{name}` は展開する。Markdown の見出し 1 はヘッダに統合
 - 見出し 2 から次の見出し 2 直前までを `<section>` で包む。趣味 / 現在の業務内容 / スキル / 資格の文言はソースどおり。見出し名では分岐しない
 - 箇条書きは 1 列の長い黒丸にしない。資格は `<table>`、スキルは `.skill-groups` グリッド＋子タグ、「課金しています」直後は `.tags` 横並び。その他の入れ子は親＋子タグ。リスト文言は省略しない
@@ -25,15 +25,20 @@
 
 ## いま動いていないもの
 
-- ソース Markdown の追従（F012）
 - 入力異常の表示（F013）
 
 ## 次にやること
 
-1. **F012 ソース Markdown の追従** — 依存 F004 完了。末尾にプローブ行を足して HMR / 自動更新を確認し、必ず元に戻す。
-2. 並行候補: F013（入力異常）。
+1. **F013 入力異常の表示** — 依存 F003 完了。ソース退避と name 欠落コピーは確認後に必ず戻す。
 
 ## 直近のセッションでやったこと
+
+### 2026-08-28（F012・ソース Markdown の追従）
+
+- ユーザー指示: `pnpm dev` でホットリロードできるようにする
+- GET `/` がプラグイン HTML のため Vite client が無かった。`/@vite/client` を注入し、`contents/self-introduction.md` の change/add で `full-reload`
+- 検証: `pnpm check` exit 0。プローブ `FEATURE_LIST_HMR_PROBE` を末尾追加 → curl が `<p>` でヒット。HMR WS が `{"type":"full-reload"}`。確認後ソース復元。verifier PASS のため F012 の `passes` を true にした
+- 既存の 3210 プロセスを止めてブランチの `pnpm dev` を起動した
 
 ### 2026-08-28（ヘッダ URL リストにダイヤ形ビュレット）
 
