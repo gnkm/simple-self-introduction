@@ -7,18 +7,18 @@
 
 ## いま動いているもの
 
-- 仕様: `docs/srs.md`（A4 1 枚制約は撤廃。印刷は A4 縦、2 枚以上可。セクション区切り必須）
-- 完了判定: `.agent/feature_list.json`（F001–F011 `passes: true`。F012–F013 は false）
+- 仕様: `docs/srs.md`（A4 1 枚制約は撤廃。印刷は A4 縦、2 枚以上可。セクション区切り必須。frontmatter の github / blog / x は氏名直下のリンクで、テキストと href が同じ URL）
+- 完了判定: `.agent/feature_list.json`（F001–F011 `passes: true`。F012–F013 は false。F006 / F010 のヘッダ記述は旧仕様のまま。正は seed / SRS）
 - `pnpm check`（`biome check .` と `tsc --noEmit`）
 - `pnpm build`（型検査付き Vite 本番ビルド）
 - `pnpm dev`（Vite。ポート 3210・`strictPort: true`・`host: "localhost"`。IPv4/IPv6 ループバック）
 - GET `/` が `contents/self-introduction.md` を unified（`remark-parse` → `remark-frontmatter` → `remark-rehype` → `rehype-stringify`）で HTML にして返す。生 HTML は通さない。ブラウザで md を fetch しない
-- ページ先頭ヘッダ: frontmatter の `name` を 1 つの `h1` に出し、存在する URL を GitHub / Blog / X のテキストラベルでリンクする。本文の `{name}` は展開する。Markdown の見出し 1 はヘッダに統合
+- ページ先頭ヘッダ: frontmatter の `name` を 1 つの `h1` に出し、存在する github / blog / x を氏名直下のリンクとして出す（内側と href は同じ URL）。本文の `{name}` は展開する。Markdown の見出し 1 はヘッダに統合
 - 見出し 2 から次の見出し 2 直前までを `<section>` で包む。趣味 / 現在の業務内容 / スキル / 資格の文言はソースどおり。見出し名では分岐しない
 - 箇条書きは 1 列の長い黒丸にしない。資格は `<table>`、スキルは `.skill-groups` グリッド＋子タグ、「課金しています」直後は `.tags` 横並び。その他の入れ子は親＋子タグ。リスト文言は省略しない
 - ページ内の http(s) リンクは `target="_blank"` と `rel="noopener noreferrer"`。単独行 URL は自動リンク。空の href の a は残さない
 - GET `/page.css` と `/list-layout.css` はプラグインが `text/css` で生 CSS を返す（`src` 直リンクだと Vite が JS モジュールにする）
-- 画面デザイン: 紙色背景 `#f6f4ef`、本文 `#1c1b19`、アクセント `#2c4a6e` をカスタムプロパティ経由。ヘッダは左氏名・右リンク・下罫線。見出し 2 セクションは 1px 枠＋左 4px アクセント。趣味 h3 は 1 列。フッター無し
+- 画面デザイン: 紙色背景 `#f6f4ef`、本文 `#1c1b19`、アクセント `#2c4a6e` をカスタムプロパティ経由。ヘッダは氏名とその直下の URL リンク（アクセント色の小さいダイヤ形ビュレット、`align-items: center`）・下罫線。見出し 2 セクションは 1px 枠＋左 4px アクセント。趣味 h3 は 1 列。フッター無し
 - 印刷: `@page { size: A4 portrait; margin: 12mm; }`、印刷時 11pt、`break-inside: avoid`。現行分量は 2 ページ
 - GitHub Actions `.github/workflows/ci.yml`（`pull_request` と `main` への `push` で `pnpm check`）
 - Cloud Agent `start`: `.cursor/sync-latest-main.sh` が `origin/main` を fetch し、クリーンな default branch なら fast-forward する
@@ -34,6 +34,26 @@
 2. 並行候補: F013（入力異常）。
 
 ## 直近のセッションでやったこと
+
+### 2026-08-28（ヘッダ URL リストにダイヤ形ビュレット）
+
+- ユーザー指示: github / blog / x のリストにビュレットが無い。かっちょいいビュレットを足す。続いて縦位置が文字とずれている
+- `.profile-urls > li` は `align-items: center`。`::before` は `clip-path` のダイヤ（回転のレイアウトずれを避ける）
+- 検証: ヘッドレス 2x 画面でダイヤのインク範囲と URL 字形の上下が一致
+
+### 2026-08-28（ヘッダ URL をリンクテキストに）
+
+- ユーザー指示: リンクは可。問題は URL が見えないこと。`a` の内側と href を同じ URL にする
+- seed / SRS を更新。GitHub / Blog / X ラベルは使わない。氏名直下は維持
+- `renderHeaderUrls` が `<a href="{url}">{url}</a>`。`target="_blank"` と `rel="noopener noreferrer"`
+- 検証: `pnpm check` exit 0。`curl` で 3 URL すべて text==href。ラベル無し
+
+### 2026-08-28（ヘッダ URL を文字列表示）
+
+- ユーザー指示: PDF 配布でリンク情報が落ちるため、github / blog / x はリンクにせず氏名の直下に URL 文字列として出す
+- seed / SRS を先に更新（コードで仕様を上書きしない）。`feature_list.json` の記述はルールどおり未変更
+- `renderHeaderUrls` が `ul.profile-urls` に URL を `li` で出す。ヘッダに `a` は無い。本文の dotfiles は従来どおり外部リンク
+- 検証: `pnpm check` exit 0。`curl` で h1 直下に 3 URL・ヘッダ内 `a` なし。Chrome ヘッドレス画面で氏名直下に URL 文字列を確認
 
 ### 2026-08-28（F011・A4 複数ページと読みやすさ）
 
