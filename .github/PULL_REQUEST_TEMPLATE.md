@@ -24,7 +24,7 @@ Closes #
 
 - [ ] `pnpm check` が通る（未整備なら `biome check` と `tsc --noEmit`）
 - [ ] `pnpm dev` で http://localhost:3210 が想定どおり表示される
-- [ ] Chrome 印刷プレビュー（A4 縦、ヘッダーとフッター off）で 1 ページに収まる（表示・スタイルを変えた場合）
+- [ ] Chrome 印刷プレビュー（A4 縦、ヘッダーとフッター off）で本文が切れない（2 枚以上可。表示・スタイルを変えた場合）
 - [ ] `.agent/feature_list.json` の `passes` を true にした項目は、verifier が verification を実行済み
 
 ## エージェントハーネス

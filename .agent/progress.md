@@ -3,12 +3,12 @@
 セッション間の引き継ぎ。**次のセッションは記憶ゼロで始まる。**
 停止する前に必ず更新すること。
 
-最終更新: 2026-08-27
+最終更新: 2026-08-28
 
 ## いま動いているもの
 
-- 仕様: `docs/srs.md`
-- 完了判定: `.agent/feature_list.json`（F001–F010 `passes: true`。F011–F013 は false）
+- 仕様: `docs/srs.md`（A4 1 枚制約は撤廃。印刷は A4 縦、2 枚以上可。セクション区切り必須）
+- 完了判定: `.agent/feature_list.json`（F001–F011 `passes: true`。F012–F013 は false）
 - `pnpm check`（`biome check .` と `tsc --noEmit`）
 - `pnpm build`（型検査付き Vite 本番ビルド）
 - `pnpm dev`（Vite。ポート 3210・`strictPort: true`・`host: "localhost"`。IPv4/IPv6 ループバック）
@@ -18,21 +18,29 @@
 - 箇条書きは 1 列の長い黒丸にしない。資格は `<table>`、スキルは `.skill-groups` グリッド＋子タグ、「課金しています」直後は `.tags` 横並び。その他の入れ子は親＋子タグ。リスト文言は省略しない
 - ページ内の http(s) リンクは `target="_blank"` と `rel="noopener noreferrer"`。単独行 URL は自動リンク。空の href の a は残さない
 - GET `/page.css` と `/list-layout.css` はプラグインが `text/css` で生 CSS を返す（`src` 直リンクだと Vite が JS モジュールにする）
-- 画面デザイン: 紙色背景 `#f6f4ef`、本文 `#1c1b19`、アクセント `#2c4a6e` をカスタムプロパティ経由。ヘッダは左氏名・右リンク・下罫線。趣味 h3 は 1〜2 列。フッター無し
+- 画面デザイン: 紙色背景 `#f6f4ef`、本文 `#1c1b19`、アクセント `#2c4a6e` をカスタムプロパティ経由。ヘッダは左氏名・右リンク・下罫線。見出し 2 セクションは 1px 枠＋左 4px アクセント。趣味 h3 は 1 列。フッター無し
+- 印刷: `@page { size: A4 portrait; margin: 12mm; }`、印刷時 11pt、`break-inside: avoid`。現行分量は 2 ページ
 - GitHub Actions `.github/workflows/ci.yml`（`pull_request` と `main` への `push` で `pnpm check`）
 - Cloud Agent `start`: `.cursor/sync-latest-main.sh` が `origin/main` を fetch し、クリーンな default branch なら fast-forward する
 
 ## いま動いていないもの
 
-- 印刷時 A4 縦 1 ページ（F011）
-- ソース追従と入力異常表示
+- ソース Markdown の追従（F012）
+- 入力異常の表示（F013）
 
 ## 次にやること
 
-1. **F011 印刷時 A4 縦 1 ページ** — 依存 F010 完了。`@page` A4 縦・余白 10–14mm・`break-inside: avoid`・印刷プレビュー 1 枚。
-2. 並行候補: F012（ソース追従）/ F013（入力異常）。
+1. **F012 ソース Markdown の追従** — 依存 F004 完了。末尾にプローブ行を足して HMR / 自動更新を確認し、必ず元に戻す。
+2. 並行候補: F013（入力異常）。
 
 ## 直近のセッションでやったこと
+
+### 2026-08-28（F011・A4 複数ページと読みやすさ）
+
+- ユーザー指示で A4 1 枚制約を撤廃。seed / SRS / F011 / README / PR テンプレを更新
+- セクションを枠と左アクセントで区切る。趣味の h3 は 1 列。`@page` A4 縦・余白 12mm・印刷 11pt
+- 検証: `pnpm check` exit 0。配信 CSS に `size: A4 portrait` / `margin: 12mm` / `break-inside: avoid` / `11pt`。ヘッドレス PDF は A4 2 ページ、資格最終行あり。Chrome 印刷プレビューも 2 pages・ヘッダーフッター off。verifier PASS のため F011 の `passes` を true にした
+- GUI 用 `google-chrome` ラッパーを長いシェルから起動すると spawn が Abort する。ヘッドレスは `/usr/bin/google-chrome-stable` と別 user-data-dir を使う
 
 ### 2026-08-27（F010）
 
@@ -128,3 +136,4 @@
 - プレビルドの `pnpm dev`（PID 2580）が 3210 を占有していた。F005 確認前にその PID を止めてブランチのサーバを起動した
 - `import type { Root } from "mdast"` は直接依存が無く `tsc` が落ちる。戻り値型は推論に任せた
 - `page.css` を `list-layout.css` より先に読むと、A4 未満 1 列の media がスキル 2 列指定に負ける。畳みは `list-layout.css` 側に置く
+- GUI 用 `/usr/local/bin/google-chrome` は `--remote-debugging-port=9222` と共有プロファイル付き。長いシェルから起動すると `Command failed to spawn: Aborted`。ヘッドレス PDF は `/usr/bin/google-chrome-stable --headless=new` と別 `--user-data-dir` を使う
