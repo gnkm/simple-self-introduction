@@ -136,3 +136,4 @@
 - プレビルドの `pnpm dev`（PID 2580）が 3210 を占有していた。F005 確認前にその PID を止めてブランチのサーバを起動した
 - `import type { Root } from "mdast"` は直接依存が無く `tsc` が落ちる。戻り値型は推論に任せた
 - `page.css` を `list-layout.css` より先に読むと、A4 未満 1 列の media がスキル 2 列指定に負ける。畳みは `list-layout.css` 側に置く
+- GUI 用 `/usr/local/bin/google-chrome` は `--remote-debugging-port=9222` と共有プロファイル付き。長いシェルから起動すると `Command failed to spawn: Aborted`。ヘッドレス PDF は `/usr/bin/google-chrome-stable --headless=new` と別 `--user-data-dir` を使う
