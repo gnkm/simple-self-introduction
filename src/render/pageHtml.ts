@@ -5,27 +5,24 @@ import { externalLinkAttributes } from "./externalLink.ts";
 export const PAGE_STYLESHEET_HREF = "/page.css";
 export const LIST_LAYOUT_STYLESHEET_HREF = "/list-layout.css";
 
-const HEADER_LINKS = [
-  { key: "github", label: "GitHub" },
-  { key: "blog", label: "Blog" },
-  { key: "x", label: "X" },
-] as const;
+const HEADER_URL_KEYS = ["github", "blog", "x"] as const;
 
-function renderHeaderLinks(frontmatter: Frontmatter): string {
-  const anchors = HEADER_LINKS.flatMap((spec) => {
-    const href = frontmatter[spec.key];
-    if (href === undefined) {
+function renderHeaderUrls(frontmatter: Frontmatter): string {
+  const items = HEADER_URL_KEYS.flatMap((key) => {
+    const url = frontmatter[key];
+    if (url === undefined) {
       return [];
     }
-    const attrs = externalLinkAttributes(href);
+    const text = escapeHtml(url);
+    const attrs = externalLinkAttributes(url);
     const extra =
       attrs === undefined ? "" : ` target="${attrs.target}" rel="${attrs.rel}"`;
-    return [`<a href="${escapeHtml(href)}"${extra}>${spec.label}</a>`];
+    return [`<li><a href="${text}"${extra}>${text}</a></li>`];
   });
-  if (anchors.length === 0) {
+  if (items.length === 0) {
     return "";
   }
-  return `<nav>${anchors.join(" ")}</nav>`;
+  return `<ul class="profile-urls">${items.join("")}</ul>`;
 }
 
 export function renderPageHtml(
@@ -45,7 +42,7 @@ export function renderPageHtml(
   <body>
     <header>
       <h1>${name}</h1>
-      ${renderHeaderLinks(frontmatter)}
+      ${renderHeaderUrls(frontmatter)}
     </header>
     <main>${bodyHtml}</main>
   </body>
