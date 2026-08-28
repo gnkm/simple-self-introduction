@@ -1,3 +1,9 @@
+/**
+ * @fileoverview 開発サーバで自己紹介ページを返す Vite プラグイン。
+ *
+ * `GET /` と `GET /index.html` に完成 HTML を返す。ブラウザは Markdown を再取得しない。
+ * ソース Markdown の変更ではフルリロードする。
+ */
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import type { Plugin, ViteDevServer } from "vite";
@@ -62,6 +68,8 @@ function reloadOnSourceMarkdownChange(server: ViteDevServer): void {
 
 /**
  * GET / で完成 HTML を返す。ブラウザに Markdown を再取得させない。
+ *
+ * @returns Vite プラグイン
  */
 export function selfIntroPlugin(): Plugin {
   return {

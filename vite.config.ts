@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Vite の開発サーバ設定。
+ *
+ * ポート 3210 に固定し、localhost のループバック（IPv4 / IPv6）だけ待ち受ける。
+ * 完成 HTML は `selfIntroPlugin` が返す。
+ */
 import http from "node:http";
 import { defineConfig, type Plugin } from "vite";
 import { selfIntroPlugin } from "./src/vite-plugin-self-intro.ts";

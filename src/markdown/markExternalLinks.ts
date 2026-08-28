@@ -1,3 +1,8 @@
+/**
+ * @fileoverview http(s) の a 要素に外部リンク属性を付け、空の href は取り除く。
+ *
+ * `target="_blank"` と `rel="noopener noreferrer"` を付与する。
+ */
 import { externalLinkAttributes } from "../render/externalLink.ts";
 
 type HastChild = {
@@ -32,6 +37,8 @@ function hrefOf(
 /**
  * http(s) の a に target="_blank" と rel="noopener noreferrer" を付ける（SRS 3.1.4）。
  * href が空の a は残さない。
+ *
+ * @param tree - 走査する hast。破壊的に書き換える
  */
 export function markExternalLinks(tree: unknown): void {
   if (!isHastParent(tree)) {

@@ -1,5 +1,15 @@
+/**
+ * @fileoverview mdast 先頭の YAML ノードからプロフィールを取り出す。
+ *
+ * `name` は必須。`github` / `blog` / `x` は任意。未知キーと空文字は無視する。
+ */
 import { parse as parseYaml } from "yaml";
 
+/**
+ * ソース Markdown 先頭 YAML から取り出すプロフィール。
+ *
+ * `name` は必須。URL 系は任意で、空文字は未設定として扱う。
+ */
 export type Frontmatter = {
   name: string;
   github?: string;
@@ -21,6 +31,10 @@ function optionalString(value: unknown): string | undefined {
 
 /**
  * remark-frontmatter の yaml ノードをオブジェクトにする。未知キーは無視する。
+ *
+ * @param tree - 先頭付近に yaml ノードを持つ mdast
+ * @returns 検証済みの frontmatter
+ * @throws YAML が無い・オブジェクトでない・name が無いとき
  */
 export function extractFrontmatter(tree: {
   children: readonly unknown[];

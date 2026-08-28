@@ -1,3 +1,8 @@
+/**
+ * @fileoverview 見出し 2 から次の見出し 2 直前までを hast の section で囲む。
+ *
+ * 見出しの文言では分岐しない。セクション化は構造だけを見る。
+ */
 type HastChild = {
   type: string;
   tagName?: string;
@@ -24,6 +29,8 @@ function isHeading2(node: HastChild): boolean {
 /**
  * 見出し 2 から次の見出し 2 直前までを section にする（SRS-F-005）。
  * 見出し名では分岐しない。
+ *
+ * @param tree - 走査する hast。破壊的に書き換える
  */
 export function wrapHeading2Sections(tree: unknown): void {
   if (!isHastParent(tree)) {

@@ -1,8 +1,15 @@
+/**
+ * @fileoverview 正常時の完成 HTML を文字列として組み立てる。
+ *
+ * ファイル I/O はしない。氏名と URL はヘッダへ、変換済み本文は main へ入れる。
+ */
 import type { Frontmatter } from "../markdown/frontmatter.ts";
 import { escapeHtml } from "./escapeHtml.ts";
 import { externalLinkAttributes } from "./externalLink.ts";
 
+/** 画面・印刷の基本スタイルへのパス。 */
 export const PAGE_STYLESHEET_HREF = "/page.css";
+/** リスト置換後のレイアウト用スタイルへのパス。 */
 export const LIST_LAYOUT_STYLESHEET_HREF = "/list-layout.css";
 
 const HEADER_URL_KEYS = ["github", "blog", "x"] as const;
@@ -25,6 +32,12 @@ function renderHeaderUrls(frontmatter: Frontmatter): string {
   return `<ul class="profile-urls">${items.join("")}</ul>`;
 }
 
+/**
+ * 正常時の文書 HTML を返す。
+ *
+ * @param frontmatter - ヘッダに出す氏名と URL
+ * @param bodyHtml - 変換済み本文（エスケープ済みの HTML 断片）
+ */
 export function renderPageHtml(
   frontmatter: Frontmatter,
   bodyHtml: string,

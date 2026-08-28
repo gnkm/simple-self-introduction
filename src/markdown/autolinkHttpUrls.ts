@@ -1,3 +1,8 @@
+/**
+ * @fileoverview 本文テキスト中の素の http(s) URL を mdast の link ノードにする。
+ *
+ * 既存の link 内は走査しない。文末の句読点や対にならない閉じ括弧は URL から外す。
+ */
 type MdastChild = {
   type: string;
   value?: string;
@@ -85,6 +90,8 @@ function splitTextWithUrls(value: string): MdastChild[] {
 /**
  * 本文テキスト中の http(s) URL を link ノードにする（SRS 3.1.2 単独行 URL）。
  * 既存の link 内は触らない。
+ *
+ * @param tree - 走査する mdast。破壊的に書き換える
  */
 export function autolinkHttpUrls(tree: unknown): void {
   if (isRecord(tree) && tree.type === "link") {

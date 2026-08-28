@@ -1,3 +1,8 @@
+/**
+ * @fileoverview 本文・見出しの `{name}` を frontmatter の氏名で置換する。
+ *
+ * YAML ノードの値は触らない。ツリーを破壊的に書き換える。
+ */
 type Walkable = {
   type: string;
   value?: string;
@@ -15,6 +20,9 @@ function isWalkable(node: unknown): node is Walkable {
 
 /**
  * 本文・見出しの `{name}` を frontmatter の name で置換する。
+ *
+ * @param tree - 走査する mdast
+ * @param name - frontmatter の氏名
  */
 export function expandNamePlaceholder(tree: unknown, name: string): void {
   if (!isWalkable(tree)) {

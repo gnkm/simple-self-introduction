@@ -1,3 +1,8 @@
+/**
+ * @fileoverview 見出し 3 から次の見出し 3 直前までをブロックにし、連続ブロックをグリッドにする。
+ *
+ * 見出しの文言では分岐しない。section 内だけを対象にする。
+ */
 type HastChild = {
   type: string;
   tagName?: string;
@@ -94,6 +99,8 @@ function wrapSectionHeading3Blocks(section: HastElement): void {
 /**
  * 見出し 3 から次の見出し 3 直前までをブロックにし、連続ブロックを 1〜2 列グリッドにする。
  * 見出し名では分岐しない。
+ *
+ * @param tree - section を子に持つ hast。破壊的に書き換える
  */
 export function wrapHeading3Blocks(tree: unknown): void {
   if (!isHastParent(tree)) {
