@@ -7,20 +7,23 @@
 
 ## いま動いているもの
 
-- 仕様: `docs/srs.md`（配布用 PDF が最終形。印刷は A4 縦、2 枚以上可。セクション区切りは余白が主。枠・左右縦線は置かない。ヘッダはサマリ任意、URL はラベル＋ URL 併記）
+- 仕様: `docs/srs.md`（機能）。見た目の再現は `docs/design-system.md`。想定読者は同じ派遣会社の別案件の同僚。PDF が最終形。セクション区切りは余白が主。枠・左右縦線は置かない
 - 完了判定: `.agent/feature_list.json`（F001–F013 `passes: true`。F006 / F010 のヘッダ記述は旧仕様のまま。正は seed / SRS）
 - `pnpm check`（`biome check .` と `tsc --noEmit`）
-- `pnpm build`（型検査付き Vite 本番ビルド）
+- `pnpm build`（型検査付き Vite 本番ビルド。完成 HTML と CSS を `dist/` に出す。プレースホルダ JS は残さない。入力異常は非 0）
+- `pnpm preview`（`dist/` の静的確認）
+- `pnpm pages:deploy`（build のあと Wrangler で Cloudflare Pages に上げる。要 `wrangler login`）
 - `pnpm dev`（Vite。ポート 3210・`strictPort: true`・`host: "localhost"`。IPv4/IPv6 ループバック）
 - GET `/` が `contents/self-introduction.md` を unified（`remark-parse` → `remark-frontmatter` → `remark-rehype` → `rehype-stringify`）で HTML にして返す。生 HTML は通さない。ブラウザで md を fetch しない。開発中は `/@vite/client` を注入し、ソース Markdown の保存で Vite `full-reload`
 - ページ先頭ヘッダ: `name` を 1 つの `h1`。任意の `summary`（導入）と `updated`（YYYY 年 M 月時点）。github / blog / x はラベル＋ URL を横並び。本文の `{name}` は展開。Markdown の見出し 1 はヘッダに統合
 - 見出し 2 から次の見出し 2 直前までを `<section>` で包む。現行ソース順は業務 → スキル → 資格 → 今後挑戦 → 趣味。見出し名では分岐しない
-- 箇条書きは 1 列の長い黒丸にしない。資格は 2 列表（名称 / 取得、末尾括弧を列分け）。スキルはカテゴリラベル＋子タグ行。「課金しています」直後は `.tags`。その他フラットは `.list-stack`。リスト文言は省略しない
+- 箇条書きは 1 列の長い黒丸にしない。資格は 2 列表（名称 / 取得、末尾括弧を列分け）。スキルはカテゴリラベル＋子タグ行。見出し 4「課金中のサービス」直下は `.tags`。その他フラットは `.list-stack`。リスト文言は省略しない
 - ページ内の http(s) リンクは `target="_blank"` と `rel="noopener noreferrer"`。単独行 URL は自動リンクし表示からスキームを省く。空の href の a は残さない
 - GET `/page.css` と `/list-layout.css` はプラグインが `text/css` で生 CSS を返す（`src` 直リンクだと Vite が JS モジュールにする）
-- 画面デザイン: 紙色 `#f6f4ef`。ヘッダ全幅下罫線。h2 は 1.35em・短い下線。h3 は 1.14em、上余白が下より広い。スキルはラベル列＋タグ。資格は薄い行罫線。画面フッター無し。印刷時のみ `.print-id`（氏名・時点）
-- 印刷: `@page { size: A4 portrait; margin: 12mm; }`、背景白、11pt、タグは枠線＋白。`break-inside: avoid` は h2/h3 塊・スキル行・表行。現行 PDF は 2 ページ。テキスト選択可
-- GitHub Actions `.github/workflows/ci.yml`（`pull_request` と `main` への `push` で `pnpm check`）
+- 画面デザイン: 紙色 `#f6f4ef`。ヘッダ全幅下罫線。h2 は 1.35em・短い下線。h3 は 1.14em、行頭に補助色の右向き三角。h4 は 1em・補助色。スキルはラベル列＋タグ。資格は薄い行罫線。画面フッター無し。印刷時のみ `.print-id`（氏名・時点）
+- 印刷: `@page { size: A4 portrait; margin: 12mm; }`、背景白、11pt、タグは枠線＋白。`break-inside: avoid` は h2/h3/h4 塊・スキル行・表行。現行 PDF は 2 ページ。テキスト選択可
+- GitHub Actions `.github/workflows/ci.yml`（`pull_request` と `main` への `push` で `pnpm check` と `pnpm build`）
+- Cloudflare Pages: `wrangler.jsonc`（`pages_build_output_dir: ./dist`）。Git 連携は README。CLI は `pnpm pages:deploy`
 - Cloud Agent `start`: `.cursor/sync-latest-main.sh` が `origin/main` を fetch し、クリーンな default branch なら fast-forward する
 - 入力異常: ソース欠落・壊れた YAML・`name` 欠落は GET `/` が HTTP 500 と `入力エラー` ページ（パスと原因）。Untitled にしない。コンソールに `入力異常: <path>`
 
@@ -30,9 +33,42 @@
 
 ## 次にやること
 
-1. feature_list（F001–F013）は完了。F006 / F010 のヘッダ記述は旧仕様のまま。正は seed / SRS
+1. Cloudflare Pages に載せるには Cloudflare アカウントで Git 連携するか `pnpm wrangler login` のあと `pnpm pages:deploy`
+2. feature_list（F001–F013）は完了。F006 / F010 のヘッダ記述は旧仕様のまま。正は seed / SRS
 
 ## 直近のセッションでやったこと
+
+### 2026-08-29（Cloudflare Pages）
+
+- ユーザー指示: Cloudflare Pages にデプロイできるようにする。seed / SRS を先に更新（本番デプロイ非ゴールを外し、CF Pages と静的 `dist` を範囲に入れた）
+- `selfIntroPlugin` の `closeBundle` が完成 HTML と CSS を `dist/` に書き、プレースホルダの `assets/` を消す。入力異常はビルド失敗
+- `wrangler.jsonc`、`pnpm preview`、`pnpm pages:deploy`、README の Git 連携と CLI。CI に `pnpm build` を追加
+- 検証: `pnpm check` / `pnpm build` exit 0。`dist/index.html` が gnkm と本文。`page.css` / `list-layout.css` あり、`assets/` なし。`pnpm preview` で `/` と `/page.css` が 200。Chrome ヘッドレスで完成ページを確認。verifier PASS。実際の Cloudflare への upload は API トークンが無く未実施
+
+### 2026-08-29（見出し 3 の行頭に短い印）
+
+- ユーザー提案: 行頭の印で小見出しと分かるようにする。横線は壊れた箇条書きに見えるので却下。右向き三角でセクションの内訳を示す
+- 文字の ▶ は絵文字化するため、`clip-path` の三角形（補助色、高さ 0.58em）。ダイヤは URL と衝突するため使わない
+- SRS 6.2 / design-system / `h3::before`
+
+### 2026-08-29（想定読者を同僚に）
+
+- ユーザー指示: 派遣会社所属、他社案件。別案件の社員への自己紹介
+- seed / SRS 1.1・2.2・6.1 / design-system 1・2・3 を更新。採用・職務経歴の前提を外す。並びは「今の担当が先」のまま
+
+### 2026-08-29（デザインシステム文書）
+
+- ユーザー指示: 修正提案を含め、再現できるデザインシステムのドキュメント
+- `docs/design-system.md` を追加（原則、線の言語、トークン、スケール、余白、部品、印刷、チェックリスト）。数値は現行 CSS に合わせた
+- seed / SRS 6 / AGENTS 正本 / ARCHITECTURE / README / implement-next-feature から参照
+
+### 2026-08-29（課金リストを見出し 4 で分岐）
+
+- ユーザー指示: 段落の「課金しています」は不安定。課金は「生成 AI と戯れる」の内側なので見出し 4「課金中のサービス」にする
+- seed に見出し 2→3→4 の階層を追加。SRS 3.1.2 / 3.1.3 / 6.2 / 印刷・検証を先に更新してから実装
+- ソースの段落を `#### 課金中のサービス` に置換。`densifyLists` は直前が h4「課金中のサービス」のとき `.tags`。`wrapHeading3Blocks` は h4 を h3 ブロック内に残す
+- h4 は 1em・補助色。見出し 3 ブロック間より狭い余白にして、兄弟の h3 に見えないようにした
+- 検証: `pnpm check` exit 0。`curl` で h4 が「生成 AI と戯れる」の `.h3-block` 内、直後は `ul.tags` 7 件。遊び 3 件は `list-stack`。Chrome ヘッドレスで趣味欄を確認
 
 ### 2026-08-29（PDF 配布向けの改善提案を取捨選択）
 

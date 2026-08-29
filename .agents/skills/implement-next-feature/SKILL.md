@@ -10,7 +10,7 @@ description: Picks the next unfinished feature from feature_list.json, implement
 1. **対象を選ぶ前に** `.cursor/sync-latest-main.sh` を実行する（`git fetch origin main`。作業ツリーが `main` 上でクリーンなら `origin/main` に fast-forward）。Cloud のプレビルドは checkout が古い。古い `feature_list.json` を読むと完了済み ID に再着手する。
 2. `.agent/progress.md` と `.agent/feature_list.json` を読む。
 3. 次の対象を選ぶ: `passes` が `false` かつ `dependencies` 内の ID がすべて `true`（空なら即候補）。そのうち **ID が最小の 1 件**だけ。
-4. `docs/srs.md` の該当節だけ読む。デザイン詳細は 6 章、印刷は 5 章。seed と衝突したら seed を優先し、コードで上書きしない。
+4. `docs/srs.md` の該当節だけ読む。見た目の再現は `docs/design-system.md`（SRS 6 章は要約）。印刷は 5 章。seed と衝突したら seed を優先し、コードで上書きしない。
 5. その 1 件だけ実装する。隣接 ID まで先回りしない。
 6. 対象の `verification` を **このセッションで実行する**。F012 / F013 はファイルを一時変更するので、確認後は必ず元に戻す。
 7. verifier サブエージェント（`.cursor/agents/verifier.md`）に、対象 ID と自分が走らせたコマンドを渡して判定させる。コード修正は verifier にさせない。

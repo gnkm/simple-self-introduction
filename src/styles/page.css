@@ -158,10 +158,31 @@ h2 {
 }
 
 h3 {
+  align-items: center;
   break-after: avoid;
+  display: flex;
   font-size: 1.14em;
   font-weight: 700;
+  gap: 0.5rem;
   margin: 0 0 0.55em;
+}
+
+/* 行頭の右向き三角。セクションの内訳。文字の ▶ は絵文字化するため使わない */
+h3::before {
+  background: var(--color-muted);
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+  content: "";
+  flex-shrink: 0;
+  height: 0.58em;
+  width: 0.5em;
+}
+
+h4 {
+  break-after: avoid;
+  color: var(--color-muted);
+  font-size: 1em;
+  font-weight: 700;
+  margin: 0.85em 0 0.28em;
 }
 
 p {
@@ -239,6 +260,7 @@ td {
 
   h2,
   h3,
+  h4,
   .h3-block,
   .skill-group,
   .tags,

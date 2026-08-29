@@ -28,3 +28,6 @@ jobs:
 
       - name: Run check
         run: pnpm check
+
+      - name: Build static site
+        run: pnpm build
