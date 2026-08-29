@@ -37,6 +37,8 @@
 pnpm install
 pnpm dev          # http://localhost:3210 （ポート固定。フォールバックしない）
 pnpm check        # 未整備なら biome check と tsc --noEmit
+pnpm build        # dist に完成 HTML と CSS
+pnpm pages:deploy # Cloudflare Pages（要 wrangler login）
 ```
 
 ## サブエージェントとスキル
@@ -50,7 +52,7 @@ pnpm check        # 未整備なら biome check と tsc --noEmit
 
 ## 変更してよいファイル
 
-`package.json`, `pnpm-lock.yaml`, `README.md`, `src/`, Vite / TypeScript 設定、本ハーネス（ユーザー指示があるとき）。
+`package.json`, `pnpm-lock.yaml`, `README.md`, `src/`, Vite / TypeScript 設定、`wrangler.jsonc`、本ハーネス（ユーザー指示があるとき）。
 
 ブランチとコミットは [CONTRIBUTING.md](CONTRIBUTING.md)。
 

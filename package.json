@@ -9,13 +9,16 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
-    "check": "biome check . && tsc --noEmit"
+    "preview": "vite preview",
+    "check": "biome check . && tsc --noEmit",
+    "pages:deploy": "pnpm build && wrangler pages deploy dist --project-name=simple-self-introduction"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.8",
     "@types/node": "^22.20.1",
     "typescript": "5.9.3",
-    "vite": "8.2.2"
+    "vite": "8.2.2",
+    "wrangler": "^4.127.1"
   },
   "dependencies": {
     "rehype-stringify": "^10.0.1",

@@ -5,3 +5,5 @@ dist/
 .cursor-audit.jsonl
 
 .pnpm-store/
+.wrangler/
+

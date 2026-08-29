@@ -24,7 +24,9 @@ src/render/pageHtml.ts              ヘッダ＋本文の完成 HTML
 http://localhost:3210/              text/html
 ```
 
-入力が壊れているときは `src/render/errorPage.ts` が 500 の HTML を返す。
+`pnpm build` は同じ変換を `dist/index.html` と CSS（`page.css` / `list-layout.css`）に書く。Cloudflare Pages はこの `dist/` を公開する。
+
+入力が壊れているときは、開発サーバは `src/render/errorPage.ts` が 500 の HTML を返す。ビルドは非 0 で失敗する。
 
 `index.html` と `src/main.ts` は Vite が入口として要求するプレースホルダである。完成ページの中身はプラグインが返す。
 
@@ -36,13 +38,14 @@ http://localhost:3210/              text/html
 ├── ARCHITECTURE.md                 本ファイル。配置と責務
 ├── CONTRIBUTING.md                 ブランチ名・コミットメッセージの規約
 ├── LICENSE                         ライセンス（エージェントは変更しない）
-├── README.md                       起動・検査・PDF 保存の手順
+├── README.md                       起動・検査・PDF 保存・Cloudflare Pages の手順
 ├── biome.json                      Biome（lint / format）。エージェントは変更しない
 ├── lefthook.yml                    pre-commit（format / 脆弱性スキャン / 秘密検出）
-├── package.json                    スクリプトと依存。dev / build / check
+├── package.json                    スクリプトと依存。dev / build / preview / check / pages:deploy
 ├── pnpm-lock.yaml                  pnpm の lock
 ├── tsconfig.json                   TypeScript。strict、src のみ include、emit しない
 ├── vite.config.ts                  開発サーバ。ポート 3210 固定、localhost のみ、プラグイン登録
+├── wrangler.jsonc                  Cloudflare Pages。出力は dist
 ├── index.html                      Vite の HTML 入口。完成ページはプラグインが上書き
 ├── contents/                       表示する本文。アプリが探索するのはここだけ
 │   └── self-introduction.md        唯一のコンテンツ源。frontmatter + Markdown
@@ -82,7 +85,7 @@ http://localhost:3210/              text/html
     ├── CODEOWNERS                  ハーネス・検査設定の変更にレビューを要求する
     ├── PULL_REQUEST_TEMPLATE.md    PR 本文の型
     └── workflows/
-        └── ci.yml                  PR と main への push で pnpm check
+        └── ci.yml                  PR と main への push で pnpm check と pnpm build
 ```
 
 ## `src/` — アプリ本体
@@ -96,7 +99,7 @@ SRS 2.5 の責務分けに従う。
 ```text
 src/
 ├── main.ts                         ブラウザ側の入口。空のモジュール（プレースホルダ）
-├── vite-plugin-self-intro.ts       GET / で完成 HTML を返す。CSS 配信と Markdown 変更時の再読込
+├── vite-plugin-self-intro.ts       GET / と dist に完成 HTML を出す。CSS 配信と Markdown 変更時の再読込
 ├── markdown/                       読取・解析・AST 変換。unified パイプライン
 │   ├── convertMarkdown.ts          変換の入口。下のモジュールを順に呼ぶ
 │   ├── readSource.ts               contents/self-introduction.md のパス解決と読取

@@ -25,6 +25,8 @@ Simple Self Introduction
 
 - Markdown の解析と HTML への変換
 - 開発用 HTTP サーバ（`pnpm dev`、`http://localhost:3210`）
+- 本番ビルド（`pnpm build`）で、開発サーバと同じ完成 HTML と CSS を `dist/` に出す
+- Cloudflare Pages への静的ホスト（Git 連携または Wrangler）
 - 画面表示用および印刷用のスタイル
 - 上記を支える TypeScript のビルド・型検査・Lint
 
@@ -50,7 +52,8 @@ Simple Self Introduction
 - React / Vue / Svelte / Next.js などの UI フレームワーク
 - コンポーネントライブラリ、アイコンフォント、アニメーションライブラリ
 - Tailwind CSS および CSS-in-JS
-- 本番デプロイ、CI での PDF 生成、自動スクリーンショット
+- GitHub Pages など、Cloudflare Pages 以外のホスティング設定
+- CI での PDF 生成、自動スクリーンショット
 - i18n、テーマ切替、ダークモード
 - Markdown の拡張構文（GFM テーブル記法の入力、脚注、数式）の新規サポート
 
@@ -59,7 +62,7 @@ Simple Self Introduction
 | 用語 | 意味 |
 | --- | --- |
 | ソース Markdown | リポジトリルート相対で `contents/self-introduction.md` |
-| ページ | `http://localhost:3210/` が返す単一 HTML |
+| ページ | 開発サーバまたは `dist/index.html` が返す単一 HTML |
 | 印刷 | Chromium 系ブラウザの「印刷」→「PDF に保存」。用紙は A4 縦 |
 | frontmatter | ソース Markdown 先頭の YAML（`---` で囲む） |
 | AST | unified / remark が扱う Markdown 抽象構文木 |
@@ -69,6 +72,7 @@ Simple Self Introduction
 - [unified](https://github.com/unifiedjs/unified)
 - [Vite](https://vitejs.dev/)
 - [Biome](https://biomejs.dev/)
+- [Cloudflare Pages](https://developers.cloudflare.com/pages/)
 - 既存設定: `biome.json`, `lefthook.yml`, `package.json`, `.vscode/settings.json`
 
 ---
@@ -81,6 +85,7 @@ Simple Self Introduction
 2. ブラウザで `http://localhost:3210/` を開く
 3. ソース Markdown の内容が 1 枚のページとして表示される
 4. ブラウザの印刷機能で PDF を保存すると、用紙は縦 A4。2 ページ以上になってよい
+5. `pnpm build` で同じページが `dist/` に出る。Cloudflare Pages に載せて URL で配る
 
 ### 2.2 利用者
 
@@ -131,7 +136,7 @@ src/
   markdown/     # ファイル読取、frontmatter、プレースホルダ、remark パイプライン
   render/       # AST または hast からページ HTML を組み立てる。I/O しない
   styles/       # 画面用・印刷用 CSS
-  vite-plugin-self-intro.ts  # Vite から上記を呼び、ルート HTML を返す
+  vite-plugin-self-intro.ts  # Vite から上記を呼び、開発時のルート HTML と dist を出す
 index.html      # Vite の入口。中身はプレースホルダでよい
 vite.config.ts
 tsconfig.json
@@ -365,8 +370,10 @@ Chromium の印刷プレビューで用紙 A4、縦、余白は CSS `@page` に�
 `package.json` スクリプト（名前は変更可、意味は固定）:
 
 - `dev`: Vite、port 3210
-- `build`: 型検査付きの本番ビルド（静的 HTML が出るならそれでよい）
+- `build`: 型検査付きの本番ビルド。`dist/index.html` とページ CSS を出す。入力異常なら終了コードは非 0
 - `check`: Biome check と `tsc --noEmit`
+- `preview`: `dist/` を静的配信してローカル確認する
+- `pages:deploy`: `pnpm build` のあと Wrangler で Cloudflare Pages に上げる
 
 ---
 
@@ -412,9 +419,10 @@ pnpm dev
 
 ```bash
 pnpm check
+pnpm build
 ```
 
-`check` 未整備の間は `pnpm exec biome check .` と `pnpm exec tsc --noEmit` で代替する。
+`check` 未整備の間は `pnpm exec biome check .` と `pnpm exec tsc --noEmit` で代替する。`pnpm build` のあと `dist/index.html` がソース Markdown の氏名と本文を含み、`dist/page.css` と `dist/list-layout.css` があること。
 
 ### 9.2 画面
 
@@ -463,9 +471,9 @@ Chrome で印刷プレビュー:
 
 | 等級 | 意味 | 対象の例 |
 | --- | --- | --- |
-| 必須 | 未達なら未完成 | 開発基盤、CI、起動、表示、A4 縦印刷（枚数不問）、セクション区切り、unified、Vite:3210、情報欠落なし |
+| 必須 | 未達なら未完成 | 開発基盤、CI、起動、表示、A4 縦印刷（枚数不問）、セクション区切り、unified、Vite:3210、情報欠落なし、`pnpm build` の完成 HTML、Cloudflare Pages |
 | 望ましい | 品質差になる | トークンどおりの色、HMR、`pnpm check`、見出し 2 列 |
-| 任意 | 本バージョンでなくてもよい | ユニットテスト、`pnpm build` の静的ホスト |
+| 任意 | 本バージョンでなくてもよい | ユニットテスト |
 
 ---
 

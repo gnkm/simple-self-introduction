@@ -1,12 +1,13 @@
 /**
- * @fileoverview 開発サーバで自己紹介ページを返す Vite プラグイン。
+ * @fileoverview 自己紹介ページを開発サーバと本番 dist に出す Vite プラグイン。
  *
- * `GET /` と `GET /index.html` に完成 HTML を返す。ブラウザは Markdown を再取得しない。
+ * 開発時は `GET /` と `GET /index.html` に完成 HTML を返す。ブラウザは Markdown を再取得しない。
  * ソース Markdown の変更ではフルリロードする。
+ * 本番ビルドでは同じ HTML と CSS を `dist/` に書き、プレースホルダの JS は残さない。
  */
-import { readFile } from "node:fs/promises";
+import { copyFile, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
-import type { Plugin, ViteDevServer } from "vite";
+import type { Plugin, ResolvedConfig, ViteDevServer } from "vite";
 import { convertMarkdownToPage } from "./markdown/convertMarkdown.ts";
 import {
   readSourceMarkdown,
@@ -66,14 +67,59 @@ function reloadOnSourceMarkdownChange(server: ViteDevServer): void {
   server.watcher.on("add", reloadIfSource);
 }
 
+async function renderSourcePageHtml(root: string): Promise<string> {
+  const markdown = await readSourceMarkdown(root);
+  const { frontmatter, bodyHtml } = convertMarkdownToPage(markdown);
+  return renderPageHtml(frontmatter, bodyHtml);
+}
+
+async function writeStaticSite(root: string, outDir: string): Promise<void> {
+  const html = await renderSourcePageHtml(root);
+  await mkdir(outDir, { recursive: true });
+  await writeFile(path.join(outDir, "index.html"), html, "utf8");
+  for (const [href, relativePath] of Object.entries(STYLESHEET_FILES)) {
+    await copyFile(
+      path.resolve(root, relativePath),
+      path.join(outDir, path.basename(href)),
+    );
+  }
+  // プレースホルダの index.html 由来。完成ページは JS を読まない
+  await rm(path.join(outDir, "assets"), { recursive: true, force: true });
+}
+
 /**
- * GET / で完成 HTML を返す。ブラウザに Markdown を再取得させない。
+ * GET / で完成 HTML を返す。ビルドでは dist に同じページを書く。
  *
  * @returns Vite プラグイン
  */
 export function selfIntroPlugin(): Plugin {
+  let resolved: ResolvedConfig | undefined;
+  let wroteStaticSite = false;
+
   return {
     name: "self-intro",
+    configResolved(config) {
+      resolved = config;
+    },
+    async closeBundle() {
+      if (resolved === undefined || resolved.command !== "build") {
+        return;
+      }
+      if (wroteStaticSite) {
+        return;
+      }
+      wroteStaticSite = true;
+      const root = resolved.root;
+      const outDir = path.resolve(root, resolved.build.outDir);
+      const sourcePath = resolveSourceMarkdownPath(root);
+      try {
+        await writeStaticSite(root, outDir);
+      } catch (error) {
+        console.error(`入力異常: ${sourcePath}`);
+        console.error(error);
+        throw error;
+      }
+    },
     configureServer(server) {
       reloadOnSourceMarkdownChange(server);
       server.middlewares.use((req, res, next) => {
@@ -107,10 +153,8 @@ export function selfIntroPlugin(): Plugin {
         void (async () => {
           const sourcePath = resolveSourceMarkdownPath(server.config.root);
           try {
-            const markdown = await readSourceMarkdown(server.config.root);
-            const { frontmatter, bodyHtml } = convertMarkdownToPage(markdown);
             const html = injectViteClient(
-              renderPageHtml(frontmatter, bodyHtml),
+              await renderSourcePageHtml(server.config.root),
             );
             res.statusCode = 200;
             res.setHeader("Content-Type", "text/html; charset=utf-8");
