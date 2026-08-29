@@ -164,6 +164,14 @@ h3 {
   margin: 0 0 0.55em;
 }
 
+h4 {
+  break-after: avoid;
+  color: var(--color-muted);
+  font-size: 1em;
+  font-weight: 700;
+  margin: 0.85em 0 0.28em;
+}
+
 p {
   color: var(--color-text);
   line-break: strict;
@@ -239,6 +247,7 @@ td {
 
   h2,
   h3,
+  h4,
   .h3-block,
   .skill-group,
   .tags,

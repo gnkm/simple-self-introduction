@@ -88,7 +88,7 @@ https://github.com/gnkm/dotfiles
 - LLM どうしで会話させる
 - 『吾輩は猫である』の猫になってもらう遊び
 
-以下に課金しています。
+#### 課金中のサービス
 
 - ChatGPT
 - Claude

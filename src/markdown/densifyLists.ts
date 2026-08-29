@@ -1,7 +1,7 @@
 /**
  * @fileoverview 箇条書きを表・タグ・グリッドなど密な構造へ置き換える。
  *
- * 「資格」「スキル」と「課金しています」だけ見出し／直前文言で分岐し、
+ * 「資格」「スキル」と見出し 4「課金中のサービス」だけ見出しで分岐し、
  * スキルの親はカテゴリラベル、子はタグ。その他のフラットリストは縦並び。
  * 見える階層は 2 段まで。それより深い文言は畳んで残す。
  */
@@ -249,8 +249,8 @@ function densifyList(
   }
   if (
     previous !== undefined &&
-    previous.tagName === "p" &&
-    textContent(previous).includes("課金しています")
+    previous.tagName === "h4" &&
+    textContent(previous).trim() === "課金中のサービス"
   ) {
     return listToTags(list);
   }
@@ -272,7 +272,7 @@ function densifySection(section: HastElement): void {
 
 /**
  * 箇条書きを表・グループ・タグへ置き換える（SRS 3.1.3）。
- * 「資格」「スキル」と「課金しています」だけ見出し／文言で分岐する。
+ * 「資格」「スキル」と見出し 4「課金中のサービス」だけ見出しで分岐する。
  * その他のフラットリストは縦並び。他は入れ子の有無で決める。
  *
  * @param tree - section を子に持つ hast。破壊的に書き換える

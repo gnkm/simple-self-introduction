@@ -131,7 +131,7 @@ src/
 6. `autolinkHttpUrls` — 素の URL を link にする（表示はスキームなし可）
 7. `remark-rehype` — mdast → hast（生 HTML は通さない）
 8. `wrapHeading2Sections` — `h2` 単位の `section`
-9. `densifyLists` — リストの見た目用構造（見出し名での分岐は「資格」「スキル」と「課金しています」のみ）
+9. `densifyLists` — リストの見た目用構造（見出し名での分岐は「資格」「スキル」と見出し 4「課金中のサービス」のみ）
 10. `wrapHeading3Blocks` — `h3` ブロックとグリッド
 11. `markExternalLinks` — 外部リンク属性
 12. `rehype-stringify` — hast → `bodyHtml` 文字列

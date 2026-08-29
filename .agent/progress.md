@@ -15,11 +15,11 @@
 - GET `/` が `contents/self-introduction.md` を unified（`remark-parse` → `remark-frontmatter` → `remark-rehype` → `rehype-stringify`）で HTML にして返す。生 HTML は通さない。ブラウザで md を fetch しない。開発中は `/@vite/client` を注入し、ソース Markdown の保存で Vite `full-reload`
 - ページ先頭ヘッダ: `name` を 1 つの `h1`。任意の `summary`（導入）と `updated`（YYYY 年 M 月時点）。github / blog / x はラベル＋ URL を横並び。本文の `{name}` は展開。Markdown の見出し 1 はヘッダに統合
 - 見出し 2 から次の見出し 2 直前までを `<section>` で包む。現行ソース順は業務 → スキル → 資格 → 今後挑戦 → 趣味。見出し名では分岐しない
-- 箇条書きは 1 列の長い黒丸にしない。資格は 2 列表（名称 / 取得、末尾括弧を列分け）。スキルはカテゴリラベル＋子タグ行。「課金しています」直後は `.tags`。その他フラットは `.list-stack`。リスト文言は省略しない
+- 箇条書きは 1 列の長い黒丸にしない。資格は 2 列表（名称 / 取得、末尾括弧を列分け）。スキルはカテゴリラベル＋子タグ行。見出し 4「課金中のサービス」直下は `.tags`。その他フラットは `.list-stack`。リスト文言は省略しない
 - ページ内の http(s) リンクは `target="_blank"` と `rel="noopener noreferrer"`。単独行 URL は自動リンクし表示からスキームを省く。空の href の a は残さない
 - GET `/page.css` と `/list-layout.css` はプラグインが `text/css` で生 CSS を返す（`src` 直リンクだと Vite が JS モジュールにする）
-- 画面デザイン: 紙色 `#f6f4ef`。ヘッダ全幅下罫線。h2 は 1.35em・短い下線。h3 は 1.14em、上余白が下より広い。スキルはラベル列＋タグ。資格は薄い行罫線。画面フッター無し。印刷時のみ `.print-id`（氏名・時点）
-- 印刷: `@page { size: A4 portrait; margin: 12mm; }`、背景白、11pt、タグは枠線＋白。`break-inside: avoid` は h2/h3 塊・スキル行・表行。現行 PDF は 2 ページ。テキスト選択可
+- 画面デザイン: 紙色 `#f6f4ef`。ヘッダ全幅下罫線。h2 は 1.35em・短い下線。h3 は 1.14em。h4 は 1em・補助色（見出し 3 ブロック内のラベル）。スキルはラベル列＋タグ。資格は薄い行罫線。画面フッター無し。印刷時のみ `.print-id`（氏名・時点）
+- 印刷: `@page { size: A4 portrait; margin: 12mm; }`、背景白、11pt、タグは枠線＋白。`break-inside: avoid` は h2/h3/h4 塊・スキル行・表行。現行 PDF は 2 ページ。テキスト選択可
 - GitHub Actions `.github/workflows/ci.yml`（`pull_request` と `main` への `push` で `pnpm check`）
 - Cloud Agent `start`: `.cursor/sync-latest-main.sh` が `origin/main` を fetch し、クリーンな default branch なら fast-forward する
 - 入力異常: ソース欠落・壊れた YAML・`name` 欠落は GET `/` が HTTP 500 と `入力エラー` ページ（パスと原因）。Untitled にしない。コンソールに `入力異常: <path>`
@@ -33,6 +33,14 @@
 1. feature_list（F001–F013）は完了。F006 / F010 のヘッダ記述は旧仕様のまま。正は seed / SRS
 
 ## 直近のセッションでやったこと
+
+### 2026-08-29（課金リストを見出し 4 で分岐）
+
+- ユーザー指示: 段落の「課金しています」は不安定。課金は「生成 AI と戯れる」の内側なので見出し 4「課金中のサービス」にする
+- seed に見出し 2→3→4 の階層を追加。SRS 3.1.2 / 3.1.3 / 6.2 / 印刷・検証を先に更新してから実装
+- ソースの段落を `#### 課金中のサービス` に置換。`densifyLists` は直前が h4「課金中のサービス」のとき `.tags`。`wrapHeading3Blocks` は h4 を h3 ブロック内に残す
+- h4 は 1em・補助色。見出し 3 ブロック間より狭い余白にして、兄弟の h3 に見えないようにした
+- 検証: `pnpm check` exit 0。`curl` で h4 が「生成 AI と戯れる」の `.h3-block` 内、直後は `ul.tags` 7 件。遊び 3 件は `list-stack`。Chrome ヘッドレスで趣味欄を確認
 
 ### 2026-08-29（PDF 配布向けの改善提案を取捨選択）
 
