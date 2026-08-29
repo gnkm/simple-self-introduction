@@ -6,8 +6,9 @@
 
 1. [docs/01-seed.md](docs/01-seed.md)
 2. [docs/srs.md](docs/srs.md)
-3. [.agent/feature_list.json](.agent/feature_list.json)
-4. コード
+3. [docs/design-system.md](docs/design-system.md)（見た目の再現。機能要求は SRS）
+4. [.agent/feature_list.json](.agent/feature_list.json)
+5. コード
 
 衝突したら上位を直す。コードで仕様を上書きしない。
 

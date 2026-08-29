@@ -1,6 +1,6 @@
 # ディレクトリ構成
 
-この文書は、リポジトリの配置と各ファイルの役割を示す。製品の要求は [docs/srs.md](docs/srs.md)、意図の起点は [docs/01-seed.md](docs/01-seed.md) が正本である。起動手順は [README.md](README.md)。
+この文書は、リポジトリの配置と各ファイルの役割を示す。製品の要求は [docs/srs.md](docs/srs.md)、意図の起点は [docs/01-seed.md](docs/01-seed.md)、見た目の再現は [docs/design-system.md](docs/design-system.md) が正本である。起動手順は [README.md](README.md)。
 
 `node_modules/`、`dist/`、`.pnpm-store/`、`.git/` は生成物・依存のため省略する。
 
@@ -48,7 +48,8 @@ http://localhost:3210/              text/html
 │   └── self-introduction.md        唯一のコンテンツ源。frontmatter + Markdown
 ├── docs/                           製品仕様
 │   ├── 01-seed.md                  意図の起点。SRS と衝突したらこちらを優先
-│   └── srs.md                      実装・検証の契約
+│   ├── srs.md                      実装・検証の契約
+│   └── design-system.md            色・活字・余白・部品。見た目の再現仕様
 ├── src/                            アプリ本体（詳細は次節）
 ├── .agent/                         実装ループの進捗（仕様の正本ではない）
 │   ├── feature_list.json           E2E で確認できる作業単位。変えてよいのは passes のみ
