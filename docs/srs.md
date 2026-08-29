@@ -373,7 +373,7 @@ Chromium の印刷プレビューで用紙 A4、縦、余白は CSS `@page` に�
 - `build`: 型検査付きの本番ビルド。`dist/index.html` とページ CSS を出す。入力異常なら終了コードは非 0
 - `check`: Biome check と `tsc --noEmit`
 - `preview`: `dist/` を静的配信してローカル確認する
-- `pages:deploy`: `pnpm build` のあと Wrangler で Cloudflare Pages に上げる
+- `pages:deploy`: `pnpm build` のあと `wrangler deploy`（`dist/` を静的アセットとして上げる）
 
 ---
 

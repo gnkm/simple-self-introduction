@@ -19,18 +19,43 @@ pnpm check
 
 Biome と TypeScript（`tsc --noEmit`）を実行する。本番ビルドは `pnpm build`。成果物は `dist/`（完成 HTML と CSS）。ローカル確認は `pnpm preview`。
 
-## Cloudflare Pages
+## Cloudflare Pages へのデプロイ
 
-`pnpm build` の `dist/` を静的サイトとして公開する。URL はサイトルート（`*.pages.dev`）なので、CSS の `/page.css` はそのままでよい。
+`pnpm build` の `dist/`（完成 HTML と CSS）を公開する。公開 URL はサイトルート（`*.pages.dev`）なので、CSS の `/page.css` はそのままでよい。
+
+前提: Node.js 22.12 以上、pnpm、[Cloudflare アカウント](https://dash.cloudflare.com/)。上げる前に手元で次を確認する。
+
+```bash
+pnpm install
+pnpm build
+pnpm preview
+```
+
+[http://localhost:4173](http://localhost:4173) が自己紹介ページであること。
+
+Git 連携と CLI（Direct Upload）は **同じプロジェクトでは切り替えられない**。継続公開なら Git、一度だけなら CLI。
 
 ### Git 連携（継続公開）
 
-1. [Cloudflare dashboard](https://dash.cloudflare.com/) の Workers & Pages で Pages プロジェクトを作り、この GitHub リポジトリを接続する
-2. Build command は `pnpm build`、Build output directory は `dist`
-3. 環境変数 `PNPM_VERSION` を `10.33.3` にする（`package.json` の `packageManager` と揃える）
-4. Save and Deploy。以降は `main` への push で公開される
+1. [Workers & Pages](https://dash.cloudflare.com/?to=/:account/workers-and-pages) で **Create application** → **Pages** → **Connect to Git**（表記が **Import an existing Git repository** のこともある）
+2. GitHub でこのリポジトリを選び、**Install & Authorize** → **Begin setup**
+3. **Set up builds and deployments** で次を入れる
 
-`wrangler.jsonc` の `pages_build_output_dir` は `./dist`。プロジェクト名は `simple-self-introduction`。
+   | 項目 | 値 |
+   | --- | --- |
+   | Project name | `simple-self-introduction`（`wrangler.jsonc` の `name` と同じ） |
+   | Production branch | `main` |
+   | Build command | `pnpm build` |
+   | Deploy command | `npx wrangler deploy`（Workers Builds の既定。空にしない） |
+   | Root directory (advanced) | **空のまま**（リポジトリルート。`dist` を書かない） |
+
+`dist/` は git に含まれない。**Root directory** に `dist` を入れると、クローン直後に `Failed: root directory not found` で止まる。出力先は `wrangler.jsonc` の `assets.directory`（`./dist`）で、ビルド後に `wrangler deploy` がそこを上げる。
+
+Git 連携はビルドのあと `npx wrangler deploy` を走らせる。`pages_build_output_dir` だけだと Worker の入口が無く `Missing entry-point` で落ちる。
+
+4. **Environment variables** に `PNPM_VERSION` = `10.33.3` を足す（`package.json` の `packageManager` と揃える）。Node は Pages の既定が 22 で足りる。変えるなら `NODE_VERSION` = `22`
+5. **Save and Deploy**。成功すると `https://simple-self-introduction.pages.dev`（名前が使われていれば接尾辞が付く）
+6. 以降は `main` への push で本番が更新される。PR にはプレビュー URL が付く（fork の PR は対象外）
 
 ### CLI（手元から一度上げる）
 
@@ -39,7 +64,7 @@ pnpm wrangler login
 pnpm pages:deploy
 ```
 
-初回は Cloudflare がプロジェクト作成を確認する。公開 URL は `https://simple-self-introduction.pages.dev`（名前が使われていれば接尾辞が付く）。
+ブラウザで Cloudflare にログインする。初回はプロジェクト名を聞かれる（`simple-self-introduction`）。公開 URL は Git 連携と同じ形。
 
 ## PDF
 

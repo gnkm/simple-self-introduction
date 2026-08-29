@@ -23,7 +23,7 @@
 - 画面デザイン: 紙色 `#f6f4ef`。ヘッダ全幅下罫線。h2 は 1.35em・短い下線。h3 は 1.14em、行頭に補助色の右向き三角。h4 は 1em・補助色。スキルはラベル列＋タグ。資格は薄い行罫線。画面フッター無し。印刷時のみ `.print-id`（氏名・時点）
 - 印刷: `@page { size: A4 portrait; margin: 12mm; }`、背景白、11pt、タグは枠線＋白。`break-inside: avoid` は h2/h3/h4 塊・スキル行・表行。現行 PDF は 2 ページ。テキスト選択可
 - GitHub Actions `.github/workflows/ci.yml`（`pull_request` と `main` への `push` で `pnpm check` と `pnpm build`）
-- Cloudflare Pages: `wrangler.jsonc`（`pages_build_output_dir: ./dist`）。Git 連携は README。CLI は `pnpm pages:deploy`
+- Cloudflare: `wrangler.jsonc` の `assets.directory` が `./dist`。Git 連携はビルド後に `npx wrangler deploy`。CLI は `pnpm pages:deploy`
 - Cloud Agent `start`: `.cursor/sync-latest-main.sh` が `origin/main` を fetch し、クリーンな default branch なら fast-forward する
 - 入力異常: ソース欠落・壊れた YAML・`name` 欠落は GET `/` が HTTP 500 と `入力エラー` ページ（パスと原因）。Untitled にしない。コンソールに `入力異常: <path>`
 
@@ -37,6 +37,20 @@
 2. feature_list（F001–F013）は完了。F006 / F010 のヘッダ記述は旧仕様のまま。正は seed / SRS
 
 ## 直近のセッションでやったこと
+
+### 2026-08-29（wrangler deploy の Missing entry-point）
+
+- Git 連携は `pnpm build` のあと `npx wrangler deploy` を走らせる。`pages_build_output_dir` だと Pages 扱いのまま Worker 入口が無く落ちる
+- `wrangler.jsonc` を `assets.directory: ./dist` に変更。`pages:deploy` も `wrangler deploy` に揃えた
+
+### 2026-08-29（Pages の root directory not found）
+
+- Git 連携がクローン直後に失敗。`dist` は gitignore なので **Root directory** に書くと存在しない。空（リポジトリルート）にし、`dist` は Build output だけ。README に注意を足した
+
+### 2026-08-29（README の Cloudflare 手順）
+
+- ユーザー指示: Cloudflare へのデプロイ手順を README に書く
+- 既存の短い節を、手元の `build` / `preview`、Git 連携の入力表、CLI、Git と Direct Upload は切り替え不可、まで具体化した
 
 ### 2026-08-29（Cloudflare Pages）
 

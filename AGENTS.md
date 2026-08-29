@@ -38,7 +38,7 @@ pnpm install
 pnpm dev          # http://localhost:3210 （ポート固定。フォールバックしない）
 pnpm check        # 未整備なら biome check と tsc --noEmit
 pnpm build        # dist に完成 HTML と CSS
-pnpm pages:deploy # Cloudflare Pages（要 wrangler login）
+pnpm pages:deploy # Cloudflare（要 wrangler login。wrangler deploy）
 ```
 
 ## サブエージェントとスキル

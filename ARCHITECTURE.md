@@ -45,7 +45,7 @@ http://localhost:3210/              text/html
 ├── pnpm-lock.yaml                  pnpm の lock
 ├── tsconfig.json                   TypeScript。strict、src のみ include、emit しない
 ├── vite.config.ts                  開発サーバ。ポート 3210 固定、localhost のみ、プラグイン登録
-├── wrangler.jsonc                  Cloudflare Pages。出力は dist
+├── wrangler.jsonc                  Cloudflare。静的アセットは dist
 ├── index.html                      Vite の HTML 入口。完成ページはプラグインが上書き
 ├── contents/                       表示する本文。アプリが探索するのはここだけ
 │   └── self-introduction.md        唯一のコンテンツ源。frontmatter + Markdown
