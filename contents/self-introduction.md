@@ -28,20 +28,23 @@ React + Express.js を使っており、フロントエンド、バックエン�
 - 言語
   - Python
   - TypeScript
+  - PHP
+  - HTML
+  - CSS
 - フロント
   - React
   - Astro
-  - HTML
-  - CSS
+  - CakePHP
 - データ / AI
   - LightGBM
   - scikit-learn
   - JupyterLab
-- 基盤
+- インフラ
   - Linux(CentOS)
   - Yocto
   - Docker(Podman)
   - AWS(EC2, S3)
+- データベース
   - MySQL
 - 開発環境
   - Git(Git flow, GitHub flow)
