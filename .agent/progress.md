@@ -22,7 +22,7 @@
 - GET `/page.css` と `/list-layout.css` はプラグインが `text/css` で生 CSS を返す（`src` 直リンクだと Vite が JS モジュールにする）
 - 画面デザイン: 紙色 `#f6f4ef`。ヘッダ全幅下罫線。h2 は 1.35em・短い下線。h3 は 1.14em、行頭に補助色の右向き三角。h4 は 1em・補助色。スキルはラベル列＋タグ。資格は薄い行罫線。画面フッター無し。印刷時のみ `.print-id`（氏名・時点）
 - 印刷: `@page { size: A4 portrait; margin: 12mm; }`、背景白、11pt、タグは枠線＋白。`break-inside: avoid` は h2/h3/h4 塊・スキル行・表行。現行 PDF は 2 ページ。テキスト選択可
-- GitHub Actions `.github/workflows/ci.yml`（`pull_request` と `main` への `push` で `pnpm check` と `pnpm build`）
+- GitHub Actions `.github/workflows/ci.yml`（`pull_request` と `main` への `push` で `pnpm check` と `pnpm build`）。README 先頭に `main` の成功バッジ
 - Cloudflare: `wrangler.jsonc` の `assets.directory` が `./dist`。Git 連携はビルド後に `npx wrangler deploy`。CLI は `pnpm pages:deploy`
 - Cloud Agent `start`: `.cursor/sync-latest-main.sh` が `origin/main` を fetch し、クリーンな default branch なら fast-forward する
 - 入力異常: ソース欠落・壊れた YAML・`name` 欠落は GET `/` が HTTP 500 と `入力エラー` ページ（パスと原因）。Untitled にしない。コンソールに `入力異常: <path>`
@@ -37,6 +37,10 @@
 2. feature_list（F001–F013）は完了。F006 / F010 のヘッダ記述は旧仕様のまま。正は seed / SRS
 
 ## 直近のセッションでやったこと
+
+### 2026-08-29（README の CI バッジ）
+
+- ユーザー指示: README に CI 成功状況のバッジ。`ci.yml` の `main` 向け GitHub Actions バッジを見出し直下に置いた
 
 ### 2026-08-29（wrangler deploy の Missing entry-point）
 
