@@ -1,9 +1,9 @@
 /**
  * @fileoverview 正常時の完成 HTML を文字列として組み立てる。
  *
- * ファイル I/O はしない。氏名と URL はヘッダへ、変換済み本文は main へ入れる。
+ * ファイル I/O はしない。氏名・サマリ・URL はヘッダへ、変換済み本文は main へ入れる。
  */
-import type { Frontmatter } from "../markdown/frontmatter.ts";
+import { type Frontmatter, formatAsOf } from "../markdown/frontmatter.ts";
 import { escapeHtml } from "./escapeHtml.ts";
 import { externalLinkAttributes } from "./externalLink.ts";
 
@@ -12,24 +12,52 @@ export const PAGE_STYLESHEET_HREF = "/page.css";
 /** リスト置換後のレイアウト用スタイルへのパス。 */
 export const LIST_LAYOUT_STYLESHEET_HREF = "/list-layout.css";
 
-const HEADER_URL_KEYS = ["github", "blog", "x"] as const;
+const HEADER_URLS = [
+  { key: "github", label: "GitHub" },
+  { key: "blog", label: "Blog" },
+  { key: "x", label: "X" },
+] as const;
 
 function renderHeaderUrls(frontmatter: Frontmatter): string {
-  const items = HEADER_URL_KEYS.flatMap((key) => {
+  const items = HEADER_URLS.flatMap(({ key, label }) => {
     const url = frontmatter[key];
     if (url === undefined) {
       return [];
     }
-    const text = escapeHtml(url);
+    const href = escapeHtml(url);
     const attrs = externalLinkAttributes(url);
     const extra =
       attrs === undefined ? "" : ` target="${attrs.target}" rel="${attrs.rel}"`;
-    return [`<li><a href="${text}"${extra}>${text}</a></li>`];
+    return [
+      `<li><a href="${href}"${extra}><span class="url-label">${label}</span><span class="url-plain">${href}</span></a></li>`,
+    ];
   });
   if (items.length === 0) {
     return "";
   }
   return `<ul class="profile-urls">${items.join("")}</ul>`;
+}
+
+function renderLead(frontmatter: Frontmatter): string {
+  if (frontmatter.summary === undefined) {
+    return "";
+  }
+  return `<p class="lead">${escapeHtml(frontmatter.summary)}</p>`;
+}
+
+function renderAsOf(frontmatter: Frontmatter): string {
+  if (frontmatter.updated === undefined) {
+    return "";
+  }
+  return `<p class="as-of">${escapeHtml(formatAsOf(frontmatter.updated))}</p>`;
+}
+
+function renderPrintId(frontmatter: Frontmatter): string {
+  const name = escapeHtml(frontmatter.name);
+  if (frontmatter.updated === undefined) {
+    return `<p class="print-id">${name}</p>`;
+  }
+  return `<p class="print-id">${name} · ${escapeHtml(formatAsOf(frontmatter.updated))}</p>`;
 }
 
 /**
@@ -54,10 +82,15 @@ export function renderPageHtml(
   </head>
   <body>
     <header>
-      <h1>${name}</h1>
+      <div class="header-top">
+        <h1>${name}</h1>
+        ${renderAsOf(frontmatter)}
+      </div>
+      ${renderLead(frontmatter)}
       ${renderHeaderUrls(frontmatter)}
     </header>
     <main>${bodyHtml}</main>
+    ${renderPrintId(frontmatter)}
   </body>
 </html>
 `;

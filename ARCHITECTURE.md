@@ -104,6 +104,7 @@ src/
 │   ├── expandName.ts               本文・見出しの {name} を frontmatter.name で置換
 │   ├── prepareBodyAst.ts           YAML ノードと見出し 1 を除く（氏名はページヘッダへ）
 │   ├── autolinkHttpUrls.ts         素の http(s) URL を link ノードにする
+│   ├── collapseCjkLineBreakSpaces.ts 和文改行由来の半角スペースを除去
 │   ├── wrapHeading2Sections.ts     見出し 2 ごとに section で囲む
 │   ├── densifyLists.ts             箇条書きを表・タグ・グリッドへ置き換える
 │   ├── wrapHeading3Blocks.ts       見出し 3 をブロック化し、連続ブロックをグリッドにする
@@ -126,10 +127,11 @@ src/
 2. `extractFrontmatter` — YAML ノード → オブジェクト
 3. `expandNamePlaceholder` — `{name}` の展開
 4. `removeYamlAndTitleHeadings` — YAML と見出し 1 を除去
-5. `autolinkHttpUrls` — 素の URL を link にする
-6. `remark-rehype` — mdast → hast（生 HTML は通さない）
-7. `wrapHeading2Sections` — `h2` 単位の `section`
-8. `densifyLists` — リストの見た目用構造（見出し名での分岐は「資格」「スキル」と「課金しています」のみ）
-9. `wrapHeading3Blocks` — `h3` ブロックとグリッド
-10. `markExternalLinks` — 外部リンク属性
-11. `rehype-stringify` — hast → `bodyHtml` 文字列
+5. `collapseCjkLineBreakSpaces` — 和文の段落内改行由来の半角スペースを除去
+6. `autolinkHttpUrls` — 素の URL を link にする（表示はスキームなし可）
+7. `remark-rehype` — mdast → hast（生 HTML は通さない）
+8. `wrapHeading2Sections` — `h2` 単位の `section`
+9. `densifyLists` — リストの見た目用構造（見出し名での分岐は「資格」「スキル」と「課金しています」のみ）
+10. `wrapHeading3Blocks` — `h3` ブロックとグリッド
+11. `markExternalLinks` — 外部リンク属性
+12. `rehype-stringify` — hast → `bodyHtml` 文字列

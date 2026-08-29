@@ -1,17 +1,19 @@
 /**
  * @fileoverview mdast 先頭の YAML ノードからプロフィールを取り出す。
  *
- * `name` は必須。`github` / `blog` / `x` は任意。未知キーと空文字は無視する。
+ * `name` は必須。`summary` / `updated` / `github` / `blog` / `x` は任意。未知キーと空文字は無視する。
  */
 import { parse as parseYaml } from "yaml";
 
 /**
  * ソース Markdown 先頭 YAML から取り出すプロフィール。
  *
- * `name` は必須。URL 系は任意で、空文字は未設定として扱う。
+ * `name` は必須。ほかは任意で、空文字は未設定として扱う。
  */
 export type Frontmatter = {
   name: string;
+  summary?: string;
+  updated?: string;
   github?: string;
   blog?: string;
   x?: string;
@@ -27,6 +29,24 @@ function optionalString(value: unknown): string | undefined {
   }
   const trimmed = value.trim();
   return trimmed === "" ? undefined : trimmed;
+}
+
+/**
+ * `YYYY-MM` / `YYYY-MM-DD` を「YYYY 年 M 月時点」にする。ほかの文字列はそのまま。
+ *
+ * @param value - frontmatter の updated
+ */
+export function formatAsOf(value: string): string {
+  const yearMonth = /^(\d{4})-(\d{2})(?:-\d{2})?$/.exec(value);
+  if (yearMonth === null) {
+    return value;
+  }
+  const year = yearMonth[1];
+  const month = yearMonth[2];
+  if (year === undefined || month === undefined) {
+    return value;
+  }
+  return `${year} 年 ${Number(month)} 月時点`;
 }
 
 /**
@@ -64,9 +84,17 @@ export function extractFrontmatter(tree: {
   }
 
   const frontmatter: Frontmatter = { name };
+  const summary = optionalString(parsed.summary);
+  const updated = optionalString(parsed.updated);
   const github = optionalString(parsed.github);
   const blog = optionalString(parsed.blog);
   const x = optionalString(parsed.x);
+  if (summary !== undefined) {
+    frontmatter.summary = summary;
+  }
+  if (updated !== undefined) {
+    frontmatter.updated = updated;
+  }
   if (github !== undefined) {
     frontmatter.github = github;
   }

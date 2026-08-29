@@ -73,7 +73,7 @@ function splitTextWithUrls(value: string): MdastChild[] {
     nodes.push({
       type: "link",
       url,
-      children: [{ type: "text", value: url }],
+      children: [{ type: "text", value: url.replace(/^https?:\/\//, "") }],
     });
     if (rest !== "") {
       nodes.push({ type: "text", value: rest });

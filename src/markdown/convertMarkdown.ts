@@ -8,6 +8,7 @@ import rehypeStringify from "rehype-stringify";
 import remarkRehype from "remark-rehype";
 import { unified } from "unified";
 import { autolinkHttpUrls } from "./autolinkHttpUrls.ts";
+import { collapseCjkLineBreakSpaces } from "./collapseCjkLineBreakSpaces.ts";
 import { densifyLists } from "./densifyLists.ts";
 import { expandNamePlaceholder } from "./expandName.ts";
 import { extractFrontmatter, type Frontmatter } from "./frontmatter.ts";
@@ -35,6 +36,7 @@ export function convertMarkdownToPage(source: string): ConvertedPage {
   const frontmatter = extractFrontmatter(markdownAst);
   expandNamePlaceholder(markdownAst, frontmatter.name);
   removeYamlAndTitleHeadings(markdownAst);
+  collapseCjkLineBreakSpaces(markdownAst);
   autolinkHttpUrls(markdownAst);
 
   const htmlAst = unified()

@@ -7,19 +7,19 @@
 
 ## いま動いているもの
 
-- 仕様: `docs/srs.md`（A4 1 枚制約は撤廃。印刷は A4 縦、2 枚以上可。セクション区切り必須。frontmatter の github / blog / x は氏名直下のリンクで、テキストと href が同じ URL）
+- 仕様: `docs/srs.md`（配布用 PDF が最終形。印刷は A4 縦、2 枚以上可。セクション区切りは余白が主。枠・左右縦線は置かない。ヘッダはサマリ任意、URL はラベル＋ URL 併記）
 - 完了判定: `.agent/feature_list.json`（F001–F013 `passes: true`。F006 / F010 のヘッダ記述は旧仕様のまま。正は seed / SRS）
 - `pnpm check`（`biome check .` と `tsc --noEmit`）
 - `pnpm build`（型検査付き Vite 本番ビルド）
 - `pnpm dev`（Vite。ポート 3210・`strictPort: true`・`host: "localhost"`。IPv4/IPv6 ループバック）
 - GET `/` が `contents/self-introduction.md` を unified（`remark-parse` → `remark-frontmatter` → `remark-rehype` → `rehype-stringify`）で HTML にして返す。生 HTML は通さない。ブラウザで md を fetch しない。開発中は `/@vite/client` を注入し、ソース Markdown の保存で Vite `full-reload`
-- ページ先頭ヘッダ: frontmatter の `name` を 1 つの `h1` に出し、存在する github / blog / x を氏名直下のリンクとして出す（内側と href は同じ URL）。本文の `{name}` は展開する。Markdown の見出し 1 はヘッダに統合
-- 見出し 2 から次の見出し 2 直前までを `<section>` で包む。趣味 / 現在の業務内容 / スキル / 資格の文言はソースどおり。見出し名では分岐しない
-- 箇条書きは 1 列の長い黒丸にしない。資格は `<table>`、スキルは親・子ともタグ（親は青灰 `#dce3ec`、子は既存タグ色。同じ親の子は直後のグループ）、「課金しています」直後は `.tags` 横並び。その他のフラットリストは `.list-stack` 縦箇条書き。その他の入れ子は親＋子タグ。リスト文言は省略しない
-- ページ内の http(s) リンクは `target="_blank"` と `rel="noopener noreferrer"`。単独行 URL は自動リンク。空の href の a は残さない
+- ページ先頭ヘッダ: `name` を 1 つの `h1`。任意の `summary`（導入）と `updated`（YYYY 年 M 月時点）。github / blog / x はラベル＋ URL を横並び。本文の `{name}` は展開。Markdown の見出し 1 はヘッダに統合
+- 見出し 2 から次の見出し 2 直前までを `<section>` で包む。現行ソース順は業務 → スキル → 資格 → 今後挑戦 → 趣味。見出し名では分岐しない
+- 箇条書きは 1 列の長い黒丸にしない。資格は 2 列表（名称 / 取得、末尾括弧を列分け）。スキルはカテゴリラベル＋子タグ行。「課金しています」直後は `.tags`。その他フラットは `.list-stack`。リスト文言は省略しない
+- ページ内の http(s) リンクは `target="_blank"` と `rel="noopener noreferrer"`。単独行 URL は自動リンクし表示からスキームを省く。空の href の a は残さない
 - GET `/page.css` と `/list-layout.css` はプラグインが `text/css` で生 CSS を返す（`src` 直リンクだと Vite が JS モジュールにする）
-- 画面デザイン: 紙色背景 `#f6f4ef`、本文 `#1c1b19`、アクセント `#2c4a6e` をカスタムプロパティ経由。ヘッダは氏名とその直下の URL リンク（アクセント色の小さいダイヤ形ビュレット、`align-items: center`）・下罫線。見出し 2 セクションは 1px 枠＋左 4px アクセント。趣味 h3 は 1 列。フッター無し
-- 印刷: `@page { size: A4 portrait; margin: 12mm; }`、印刷時 11pt、`break-inside: avoid`。現行分量は 2 ページ
+- 画面デザイン: 紙色 `#f6f4ef`。ヘッダ全幅下罫線。h2 は 1.35em・短い下線。h3 は 1.14em、上余白が下より広い。スキルはラベル列＋タグ。資格は薄い行罫線。画面フッター無し。印刷時のみ `.print-id`（氏名・時点）
+- 印刷: `@page { size: A4 portrait; margin: 12mm; }`、背景白、11pt、タグは枠線＋白。`break-inside: avoid` は h2/h3 塊・スキル行・表行。現行 PDF は 2 ページ。テキスト選択可
 - GitHub Actions `.github/workflows/ci.yml`（`pull_request` と `main` への `push` で `pnpm check`）
 - Cloud Agent `start`: `.cursor/sync-latest-main.sh` が `origin/main` を fetch し、クリーンな default branch なら fast-forward する
 - 入力異常: ソース欠落・壊れた YAML・`name` 欠落は GET `/` が HTTP 500 と `入力エラー` ページ（パスと原因）。Untitled にしない。コンソールに `入力異常: <path>`
@@ -30,10 +30,24 @@
 
 ## 次にやること
 
-1. 業務リストと見出し 3 の重複は未着手。ユーザー指示があれば対応
-2. feature_list（F001–F013）は完了。F006 / F010 のヘッダ記述は旧仕様のまま。正は seed / SRS
+1. feature_list（F001–F013）は完了。F006 / F010 のヘッダ記述は旧仕様のまま。正は seed / SRS
 
 ## 直近のセッションでやったこと
+
+### 2026-08-29（PDF 配布向けの改善提案を取捨選択）
+
+- 採用: セクション順（業務が先、趣味が後）、サマリ、見出し階層と余白比、スキル分類、改ページ制御、ラベル＋ URL 横並び、業務の重複削除、資格 2 列、和文改行スペース除去、印刷白背景、時点表示
+- 見送り: QR、余白 20mm（12mm 維持。1 ページ目の情報量を優先）、Vivliostyle、Chrome 非対応のページ番号、チップの常用/趣味の枠線差
+- ソース Markdown を更新（順・サマリ・スキル行・資格表記）。`summary` / `updated` を frontmatter に追加
+- 検証: biome / tsc exit 0。HTML で h2 順・スキル 5 ラベル・資格 2 列・Yocto 見出しは 1 回。Chrome PDF 2 ページ、フォント埋め込みあり（テキスト選択可）
+
+### 2026-08-29（セクション枠をやめ余白で区切る）
+
+- ユーザー指示: 線は効果的なものだけ。特にセクション左右の縦線をなくし、余白を主にする
+- seed / SRS を先に更新（枠・左アクセント縦線を禁止。区切りは余白＋見出し幅の短い下罫線）
+- `section` の 1px 枠と左 4px を削除。h3 ブロック間の上罫線も削除。ヘッダ全幅罫線・資格表の行罫線・タグ枠は残す
+- h2 は `width: fit-content` と `border-bottom: currentColor`（罫線色だと短い見出しが消える）
+- 検証: `biome check` と `tsc --noEmit` exit 0。配信 CSS に `border-left` なし。Chrome ヘッドレス 900px で縦方向の連続バー 0。ヘッダ下は全幅グレー、趣味 h2 下は見出し幅のアクセント線
 
 ### 2026-08-29（遊びリストを縦箇条書きに）
 

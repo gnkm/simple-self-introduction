@@ -1,4 +1,4 @@
-/* F008: 箇条書きを 1 列の長い黒丸にしない（見た目トークンは F010） */
+/* 箇条書きを 1 列の長い黒丸にしない（見た目トークンは page.css） */
 .tags {
   display: flex;
   flex-wrap: wrap;
@@ -18,24 +18,27 @@
 }
 
 .skill-groups {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.55rem 1.1rem;
+  align-items: baseline;
+  display: grid;
+  gap: 0.5rem 1.25rem;
+  grid-template-columns: max-content 1fr;
   margin: 0 0 0.85rem;
 }
 
-.skill-groups > .skill-group {
+.skill-group {
+  display: contents;
+}
+
+.skill-label {
+  color: var(--color-muted);
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  line-height: 1.6;
+}
+
+.skill-groups .tags {
   margin: 0;
-}
-
-.tags > li.skill-parent {
-  background: var(--color-skill-parent-bg);
-  border-color: var(--color-skill-parent-border);
-  color: var(--color-accent);
-}
-
-.tags > li.skill-child {
-  background: var(--color-tag-bg);
 }
 
 .list-parent {
@@ -71,4 +74,12 @@ th,
 td {
   text-align: left;
   vertical-align: top;
+}
+
+@media print {
+  .tags > li {
+    background: #fff;
+    border-color: var(--color-text);
+    color: var(--color-text);
+  }
 }

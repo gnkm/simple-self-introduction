@@ -2,7 +2,7 @@
  * @fileoverview 箇条書きを表・タグ・グリッドなど密な構造へ置き換える。
  *
  * 「資格」「スキル」と「課金しています」だけ見出し／直前文言で分岐し、
- * その他のフラットリストは縦並びにする。他は入れ子の有無で決める。
+ * スキルの親はカテゴリラベル、子はタグ。その他のフラットリストは縦並び。
  * 見える階層は 2 段まで。それより深い文言は畳んで残す。
  */
 type HastChild = {
@@ -157,28 +157,55 @@ function listToTags(list: HastElement): HastElement {
 }
 
 function listToTable(list: HastElement): HastElement {
+  const certSplit = /^(.*)[（(]([^（）()]+)[）)]\s*$/;
   const rows = listItems(list).map((item) => {
-    return el("tr", [el("td", phrasingWithDescendants(item))]);
+    const phrasing = phrasingWithDescendants(item);
+    const text = phrasing
+      .map((node) => textContent(node))
+      .join("")
+      .trim();
+    const matched = certSplit.exec(text);
+    const name = matched?.[1]?.trim();
+    const when = matched?.[2]?.trim();
+    if (name !== undefined && when !== undefined && name !== "") {
+      return el("tr", [
+        el("td", [{ type: "text", value: name }]),
+        el("td", [{ type: "text", value: when }], ["cert-when"]),
+      ]);
+    }
+    return el("tr", [el("td", phrasing), el("td", [], ["cert-when"])]);
   });
-  return el("table", [el("tbody", rows)]);
+  const head = el("thead", [
+    el("tr", [
+      el("th", [{ type: "text", value: "名称" }]),
+      el("th", [{ type: "text", value: "取得" }], ["cert-when"]),
+    ]),
+  ]);
+  return el("table", [head, el("tbody", rows)], ["certs"]);
 }
 
 function listToSkillGroups(list: HastElement): HastElement {
   const groups = listItems(list).map((item) => {
     const { label, nested } = itemParts(item);
     const tags: HastElement[] = [];
-    if (label.length > 0) {
-      tags.push(el("li", label, ["skill-parent"]));
-    }
     if (nested !== undefined) {
       for (const child of listItems(nested)) {
         const phrasing = phrasingWithDescendants(child);
         if (phrasing.length > 0) {
-          tags.push(el("li", phrasing, ["skill-child"]));
+          tags.push(el("li", phrasing));
         }
       }
+    } else if (label.length > 0) {
+      tags.push(el("li", label));
     }
-    return el("ul", tags, ["tags", "skill-group"]);
+    const children: HastChild[] = [];
+    if (label.length > 0 && nested !== undefined) {
+      children.push(el("div", label, ["skill-label"]));
+    } else {
+      children.push(el("div", [], ["skill-label"]));
+    }
+    children.push(el("ul", tags, ["tags"]));
+    return el("div", children, ["skill-group"]);
   });
   return el("div", groups, ["skill-groups"]);
 }
