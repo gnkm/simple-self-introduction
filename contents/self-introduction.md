@@ -1,6 +1,6 @@
 ---
 name: gnkm
-summary: 製造業向け AI カメラの開発。組込み（Yocto）からウェブアプリ（React / Express.js）まで担当。生成 AI の活用に注力。
+summary: 組込み（Yocto）からウェブアプリ（React / Express.js）、AI システム(Python)まで担当。生成 AI の活用に注力。
 updated: 2026-08
 github: https://github.com/gnkm
 blog: https://tech.gnkm.info/
@@ -38,7 +38,8 @@ React + Express.js を使っており、フロントエンド、バックエン�
   - scikit-learn
   - JupyterLab
 - 基盤
-  - Linux
+  - Linux(CentOS)
+  - Yocto
   - Docker(Podman)
   - AWS(EC2, S3)
   - MySQL
@@ -62,8 +63,12 @@ https://github.com/gnkm/dotfiles
 
 ## 今後挑戦したいこと
 
-- 生成 AI の導入支援
-- 生成 AI を用いた開発
+### 生成 AI を用いた開発
+
+プライベートでは Cursor を使って 1 機能ずつ実装の指示を出していますが、
+一つの指示でシステムを完成させるしくみを作りたいです。
+
+参考: openai.com/ja-JP/index/harness-engineering/
 
 ## 趣味
 
@@ -77,7 +82,7 @@ https://github.com/gnkm/dotfiles
 遊んでいるのか遊んでもらっているのかわかりません。
 
 - コード生成
-- LLM どうしに会話させる
+- LLM どうしで会話させる
 - 『吾輩は猫である』の猫になってもらう遊び
 
 以下に課金しています。
@@ -90,4 +95,4 @@ https://github.com/gnkm/dotfiles
 - Greptile
 - Aqua Voice
 
-OpenRouter でも 10 万円くらい溶かしました。
+OpenRouter ではこれまで 10 万円くらい溶かしました
