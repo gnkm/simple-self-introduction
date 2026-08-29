@@ -97,7 +97,7 @@ Simple Self Introduction
 
 ### 2.3 前提と依存
 
-- Node.js は Vite 8 系が要求するバージョン（実装時の最新安定版に合わせる）
+- Node.js は **22.12 以上**（Vite 8 の 22 系統かつ Wrangler 4。20 系統は使わない）
 - パッケージマネージャは **pnpm のみ**（npm / yarn の lock を追加しない）
 - ソース Markdown の文字コードは UTF-8
 - 印刷確認の基準ブラウザは Chromium 系（Google Chrome または Microsoft Edge の現行安定版）
