@@ -68,7 +68,7 @@ https://github.com/gnkm/dotfiles
 プライベートでは Cursor を使って 1 機能ずつ実装の指示を出していますが、
 一つの指示でシステムを完成させるしくみを作りたいです。
 
-参考: openai.com/ja-JP/index/harness-engineering/
+参考: https://openai.com/ja-JP/index/harness-engineering/
 
 ## 趣味
 
@@ -95,4 +95,4 @@ https://github.com/gnkm/dotfiles
 - Greptile
 - Aqua Voice
 
-OpenRouter ではこれまで 10 万円くらい溶かしました
+OpenRouter ではこれまで 10 万円くらい溶かしました。
