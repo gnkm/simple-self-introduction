@@ -18,7 +18,7 @@
 - 箇条書きは 1 列の長い黒丸にしない。資格は 2 列表（名称 / 取得、末尾括弧を列分け）。スキルはカテゴリラベル＋子タグ行。見出し 4「課金中のサービス」直下は `.tags`。その他フラットは `.list-stack`。リスト文言は省略しない
 - ページ内の http(s) リンクは `target="_blank"` と `rel="noopener noreferrer"`。単独行 URL は自動リンクし表示からスキームを省く。空の href の a は残さない
 - GET `/page.css` と `/list-layout.css` はプラグインが `text/css` で生 CSS を返す（`src` 直リンクだと Vite が JS モジュールにする）
-- 画面デザイン: 紙色 `#f6f4ef`。ヘッダ全幅下罫線。h2 は 1.35em・短い下線。h3 は 1.14em。h4 は 1em・補助色（見出し 3 ブロック内のラベル）。スキルはラベル列＋タグ。資格は薄い行罫線。画面フッター無し。印刷時のみ `.print-id`（氏名・時点）
+- 画面デザイン: 紙色 `#f6f4ef`。ヘッダ全幅下罫線。h2 は 1.35em・短い下線。h3 は 1.14em、行頭に補助色の右向き三角。h4 は 1em・補助色。スキルはラベル列＋タグ。資格は薄い行罫線。画面フッター無し。印刷時のみ `.print-id`（氏名・時点）
 - 印刷: `@page { size: A4 portrait; margin: 12mm; }`、背景白、11pt、タグは枠線＋白。`break-inside: avoid` は h2/h3/h4 塊・スキル行・表行。現行 PDF は 2 ページ。テキスト選択可
 - GitHub Actions `.github/workflows/ci.yml`（`pull_request` と `main` への `push` で `pnpm check`）
 - Cloud Agent `start`: `.cursor/sync-latest-main.sh` が `origin/main` を fetch し、クリーンな default branch なら fast-forward する
@@ -33,6 +33,12 @@
 1. feature_list（F001–F013）は完了。F006 / F010 のヘッダ記述は旧仕様のまま。正は seed / SRS
 
 ## 直近のセッションでやったこと
+
+### 2026-08-29（見出し 3 の行頭に短い印）
+
+- ユーザー提案: 行頭の印で小見出しと分かるようにする。横線は壊れた箇条書きに見えるので却下。右向き三角でセクションの内訳を示す
+- 文字の ▶ は絵文字化するため、`clip-path` の三角形（補助色、高さ 0.58em）。ダイヤは URL と衝突するため使わない
+- SRS 6.2 / design-system / `h3::before`
 
 ### 2026-08-29（想定読者を同僚に）
 
