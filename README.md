@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/gnkm/simple-self-introduction/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/gnkm/simple-self-introduction/actions/workflows/ci.yml)
 
-マークダウンファイルの情報をもとに、読みやすさを優先した洗練されたデザインの自己紹介ページを作る。印刷は A4 縦。2 枚以上になってよい。見た目の再現は [docs/design-system.md](docs/design-system.md)。
+マークダウンファイルの情報をもとに、読みやすさを優先した洗練されたデザインの自己紹介ページを作る。印刷は A4 縦とする。
 
 URL: https://ssi.gnkm.info/
 
