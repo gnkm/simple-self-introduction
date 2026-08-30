@@ -84,9 +84,9 @@ https://github.com/gnkm/dotfiles
 
 遊んでいるのか遊んでもらっているのかわかりません。
 
-- コード生成
+- コード生成( https://github.com/gnkm/cursor-template )
 - LLM どうしで会話させる
-- 『吾輩は猫である』の猫になってもらう遊び
+- 『吾輩は猫である』の猫になってもらう遊び( https://cat.gnkm.info )
 
 #### 課金中のサービス
 
