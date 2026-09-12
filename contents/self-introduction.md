@@ -87,6 +87,8 @@ https://github.com/gnkm/dotfiles
 - コード生成( https://github.com/gnkm/cursor-template )
 - LLM どうしで会話させる
 - 『吾輩は猫である』の猫になってもらう遊び( https://cat.gnkm.info )
+- LINE スタンプ( https://store.line.me/stickershop/author/4974006/ja )
+- 睡眠導入動画( https://www.youtube.com/@madoromi-denpakyoku )
 
 #### 課金中のサービス
 
