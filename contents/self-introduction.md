@@ -1,7 +1,7 @@
 ---
 name: gnkm
 summary: 組込み（Yocto）からウェブアプリ（React / Express.js）、AI システム(Python)まで担当。生成 AI の活用に注力。
-updated: 2026-08
+updated: 2026-10
 github: https://github.com/gnkm
 blog: https://tech.gnkm.info/
 x: https://x.com/gnkmxjp
@@ -31,7 +31,7 @@ React + Express.js を使っており、フロントエンド、バックエン�
   - PHP
   - HTML
   - CSS
-- フロント
+- フレームワーク
   - React
   - Astro
   - CakePHP
